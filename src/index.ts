@@ -1,16 +1,26 @@
 import type { BunPlugin } from "bun";
 
 type PrerenderPluginParams = {
-  renderToString: (element: JSX.Element) => string;
-  injectStringIntoJSX: (string: string) => JSX.Element;
+  renderToStringPath: string;
+  renderToStringModuleName: string;
+  injectStringIntoJSXPath: string;
+  injectStringIntoJSXModuleName: string;
 };
 
 const filter = new RegExp(`*.(ts|js)x$`);
+const defaultConfig: PrerenderPluginParams = {
+  renderToStringPath: "brisa/server",
+  renderToStringModuleName: "renderToString",
+  injectStringIntoJSXPath: "brisa",
+  injectStringIntoJSXModuleName: "dangerHTML",
+};
 
 export default function prerenderPlugin({
-  renderToString,
-  injectStringIntoJSX,
-}: PrerenderPluginParams) {
+  renderToStringPath = defaultConfig.renderToStringPath,
+  renderToStringModuleName = defaultConfig.renderToStringModuleName,
+  injectStringIntoJSXPath = defaultConfig.injectStringIntoJSXPath,
+  injectStringIntoJSXModuleName = defaultConfig.injectStringIntoJSXModuleName,
+}: PrerenderPluginParams = defaultConfig) {
   return {
     name: "prerender-plugin",
     setup(build) {
@@ -31,11 +41,6 @@ export default function prerenderPlugin({
  * import { dangerHTML } from 'brisa';
  * import { renderToReadableStream } from 'brisa/server';
  *
- * export async function prerender(componentPath: string, moduleName = 'default', props = {}) {
- *   const Component = (await import(componentPath))[moduleName];
- *   const stream = renderToReadableStream(<Component {...props} />, { request: new Request('http://localhost') });
- *   return dangerHTML(await Bun.readableStreamToText(stream))
- * }
  */
 export function prerenderPluginTransformation(code: string) {
   return code;
