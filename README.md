@@ -188,7 +188,7 @@ For Qwik components, since Qwik does not have a built-in function for injecting 
 ```tsx
 // Define the function to create a JSX element with injected HTML string
 function createInjectedElement(htmlString: string) {
-  return <div dangerouslySetInnerHTML={{ __html: htmlString }} />;
+  return <div dangerouslySetInnerHTML={htmlString} />;
 }
 ```
 
