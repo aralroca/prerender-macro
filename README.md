@@ -26,7 +26,7 @@
 [prwelcome]: http://makeapullrequest.com
 
 <div align="center">
-  <a href="#usage-with-brisa">Brisa</a>
+  <a href="#usage-with-brisa-experimental">Brisa</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
   <a href="#usage-with-react">React</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
