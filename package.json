@@ -1,0 +1,17 @@
+{
+  "name": "prerender-macro",
+  "module": "src/index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@happy-dom/global-registrator": "13.9.0",
+    "@types/bun": "1.0.8",
+    "brisa": "0.0.31"
+  },
+  "dependencies": {
+    "astring": "1.8.6",
+    "meriyah": "4.4.0"
+  },
+  "peerDependencies": {
+    "typescript": "5.4.2"
+  }
+}
