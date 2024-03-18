@@ -6,7 +6,7 @@
     <h1 align="center">Prerender Macro</h1>
 </p>
 
-<p align="center">Bun plugin to prerender JSX components using a kind of macro.</p>
+<p align="center">Bun plugin to <b>prerender</b> JSX components using a kind of <b>macro</b>.</p>
 
 <div align="center">
 
@@ -24,6 +24,8 @@
 
 [badge-prwelcome]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square
 [prwelcome]: http://makeapullrequest.com
+
+<p align="center">Work in every JSX Framework.</p>
 
 <div align="center">
   <a href="#usage-with-brisa-experimental">Brisa</a>
@@ -73,40 +75,64 @@ bun install prerender-macro
 ```tsx
 import prerenderMacroPlugin from "prerender-macro";
 
+// The configuration should be adapted to the framework that you are using:
+export const prerenderConfig = {
+  renderComponentToString: (Component, props): string => /* */,
+  injectToJSX: (htmlString: string): JSX.Element => /* */
+};
+
 Bun.build({
+  plugins: [prerenderMacroPlugin({ prerenderConfigPath: import.meta.url })],
   entrypoints,
   outdir,
   root,
-  plugins: [prerenderMacroPlugin()],
 });
 ```
 
 ## Configuration
 
-The `prerender-macro` plugin supports the following configuration options:
+The `prerender-macro` plugin needs this mandatory configuration to work:
 
-| Parameter                    | Description                                        | Default Value      |
-| ---------------------------- | -------------------------------------------------- | ------------------ |
-| `renderToString.from`        | Path to the module providing `renderToString`      | `"brisa/server"`   |
-| `renderToString.module`      | Name of the `renderToString` module                | `"renderToString"` |
-| `injectStringIntoJSX.from`   | Path to the module providing `injectStringIntoJSX` | `"brisa"`          |
-| `injectStringIntoJSX.module` | Name of the `injectStringIntoJSX` module           | `"dangerHTML"`     |
+| Parameter             | Description                                                     | Mandatory |
+| --------------------- | --------------------------------------------------------------- | --------- |
+| `prerenderConfigPath` | String path of the file with the `prerenderConfig` named export | `true`    |
+
+The configuration can be in another file, but it is mandatory that it has the named export `prerenderConfig`.
+
+It is necessary to do it this way because this configuration will be executed when doing the prerender inside a Bun macro, and at this point we cannot pass it from the plugin because it would need to be serialized, so it is better that you directly access it.
+
+The `prerenderConfig` named export needs this mandatory configuration to work:
+
+| Parameter                 | Description                                               | Mandatory |
+| ------------------------- | --------------------------------------------------------- | --------- |
+| `renderComponentToString` | Function to transform `Component` and `props` to `string` | `true`    |
+| `injectToJSX`             | Function to inject `string` to `JSX.Element`              | `true`    |
+
+> [!NOTE]
+>
+> It is not necessary to indicate the `jsx-runtime`, it will work with the one you have and it can connect with **any JSX framework**.
+
+## Examples
 
 ## Usage with Brisa _(experimental)_
 
-It should work by default, since the plugin defaults are integrated with Brisa. By default, the plugin uses the following configuration:
+Example:
 
-```json
-{
-  "renderToString": {
-    "from": "brisa/server",
-    "module": "renderToString"
+```tsx
+import prerenderMacroPlugin from "prerender-macro";
+import { dangerHTML } from "brisa";
+import { renderToString } from "brisa/server";
+
+export const prerenderConfig = {
+  renderComponentToString: (Component, props) => {
+    return renderToString(<Component {...props} />);
   },
-  "injectStringIntoJSX": {
-    "from": "brisa",
-    "module": "dangerHTML"
-  }
-}
+  injectToJSX: dangerHTML,
+};
+
+export const plugin = prerenderMacroPlugin({
+  prerenderConfigPath: import.meta.url,
+});
 ```
 
 > [!WARNING]
@@ -119,26 +145,24 @@ Brisa is not yet public but it will be in the next months. If you want to be upd
 
 For React components, since React does not have a built-in function for injecting HTML strings directly into JSX, you need to use `dangerouslySetInnerHTML`. This allows you to bypass React's default behavior and inject raw HTML into the DOM. Here's how you can do it:
 
+Example:
+
 ```tsx
-// Define the function to create a JSX element with injected HTML string
-function createInjectedElement(htmlString: string) {
-  return <div dangerouslySetInnerHTML={{ __html: htmlString }} />;
-}
-```
+import prerenderMacroPlugin from "prerender-macro";
+import { renderToString } from "react-dom/server";
 
-The configuration that would have to be passed in the plugin:
-
-```json
-{
-  "renderToString": {
-    "from": "react-dom/server",
-    "module": "renderToString"
+export const prerenderConfig = {
+  renderComponentToString: async (Component, props) => {
+    return renderToString(<Component {...props} />);
   },
-  "injectStringIntoJSX": {
-    "from": "custom/utils",
-    "module": "createInjectedElement"
-  }
-}
+  injectToJSX: (htmlString) => (
+    <div dangerouslySetInnerHTML={{ __html: htmlString }} />
+  ),
+};
+
+export const plugin = prerenderMacroPlugin({
+  prerenderConfigPath: import.meta.url,
+});
 ```
 
 > [!CAUTION]
@@ -149,32 +173,12 @@ The configuration that would have to be passed in the plugin:
 
 For Solidjs components, since Solidjs does not have a built-in function for injecting HTML strings directly into JSX, you need to use `textContent` attribute. This allows you to bypass Solidjs's default behavior and inject raw HTML into the DOM.
 
-Besides, the solidjs `renderToString` has to be slightly modified.
+Besides, the solidjs `renderComponentToString` has to be slightly modified.
 
-Here's how you can do it:
+Example:
 
 ```tsx
-import { renderToString as solidRenderToString } from "solid-js/web";
 
-export const renderToString = (element) => solidRenderToString(() => element);
-export const injectStringIntoJSX = (htmlString) => (
-  <div textContent={htmlString} />
-);
-```
-
-The configuration that would have to be passed in the plugin:
-
-```json
-{
-  "renderToString": {
-    "from": "custom/utils",
-    "module": "renderToString"
-  },
-  "injectStringIntoJSX": {
-    "from": "custom/utils",
-    "module": "injectStringIntoJSX"
-  }
-}
 ```
 
 > [!CAUTION]
@@ -183,28 +187,12 @@ The configuration that would have to be passed in the plugin:
 
 ## Usage with Qwik
 
-For Qwik components, since Qwik does not have a built-in function for injecting HTML strings directly into JSX, you need to use `dangerouslySetInnerHTML`. This allows you to bypass Qwik's default behavior and inject raw HTML into the DOM. Here's how you can do it:
+For Qwik components, since Qwik does not have a built-in function for injecting HTML strings directly into JSX, you need to use `dangerouslySetInnerHTML`. This allows you to bypass Qwik's default behavior and inject raw HTML into the DOM.
+
+Example:
 
 ```tsx
-// Define the function to create a JSX element with injected HTML string
-function createInjectedElement(htmlString: string) {
-  return <div dangerouslySetInnerHTML={htmlString} />;
-}
-```
 
-The configuration that would have to be passed in the plugin:
-
-```json
-{
-  "renderToString": {
-    "from": "@builder.io/qwik/server",
-    "module": "renderToString"
-  },
-  "injectStringIntoJSX": {
-    "from": "custom/utils",
-    "module": "createInjectedElement"
-  }
-}
 ```
 
 > [!CAUTION]

@@ -1,17 +1,27 @@
 {
   "name": "prerender-macro",
-  "module": "src/index.ts",
+  "module": "package/index.ts",
   "type": "module",
   "devDependencies": {
-    "@happy-dom/global-registrator": "13.10.1",
+    "typescript": "5.4.2",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
     "@types/bun": "1.0.8",
+    "@types/react": "18.2.67",
+    "@types/react-dom": "18.2.22",
     "brisa": "0.0.32"
   },
   "dependencies": {
     "astring": "1.8.6",
     "meriyah": "4.4.0"
   },
-  "peerDependencies": {
-    "typescript": "5.4.2"
-  }
+  "scripts": {
+    "test": "bun run test:brisa && bun run test:react",
+    "test:brisa": "cd tests/brisa && bun test && cd ../..",
+    "test:react": "cd tests/react && bun test && cd ../.."
+  },
+  "workspaces": [
+    "package",
+    "tests/*"
+  ]
 }

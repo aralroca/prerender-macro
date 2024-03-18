@@ -1,0 +1,10 @@
+{
+  "name": "test-brisa",
+  "private": true,
+  "scripts": {
+    "test": "bun test"
+  },
+  "dependencies": {
+    "prerender-macro": "workspace:*"
+  }
+}

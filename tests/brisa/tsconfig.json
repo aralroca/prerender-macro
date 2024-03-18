@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": "/package",
+    "baseUrl": ".",
     "lib": ["dom", "dom.iterable", "esnext"],
     "module": "esnext",
     "target": "esnext",
@@ -19,6 +19,7 @@
     "allowJs": true,
     "verbatimModuleSyntax": true,
     "noFallthroughCasesInSwitch": true,
+    "types": ["brisa"],
     "paths": {
       "@/*": ["*"]
     }
