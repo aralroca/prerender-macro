@@ -24,7 +24,6 @@
 
 [badge-prwelcome]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square
 [prwelcome]: http://makeapullrequest.com
-[spectrum]: https://spectrum.chat/next-translate
 
 <div align="center">
   <a href="#usage-with-brisa">Brisa</a>
@@ -33,7 +32,7 @@
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
   <a href="#usage-with-solidjs">Solidjs</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="#usage-with-qwik>Qwik</a>
+  <a href="#usage-with-qwik">Qwik</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
   <a href="https://github.com/sponsors/aralroca">Sponsors</a>
   <br />
@@ -93,7 +92,7 @@ The `prerender-macro` plugin supports the following configuration options:
 | `injectStringIntoJSX.from`   | Path to the module providing `injectStringIntoJSX` | `"brisa"`          |
 | `injectStringIntoJSX.module` | Name of the `injectStringIntoJSX` module           | `"dangerHTML"`     |
 
-## Usage with Brisa
+## Usage with Brisa _(experimental)_
 
 It should work by default, since the plugin defaults are integrated with Brisa. By default, the plugin uses the following configuration:
 
@@ -109,6 +108,12 @@ It should work by default, since the plugin defaults are integrated with Brisa. 
   }
 }
 ```
+
+> [!WARNING]
+>
+> Brisa is an _experimental_ framework that we are building.
+
+Brisa is not yet public but it will be in the next months. If you want to be updated, subscribe to my [blog newsletter](https://aralroca.com/blog).
 
 ## Usage with React
 
@@ -206,11 +211,9 @@ The configuration that would have to be passed in the plugin:
 >
 > **Additional `<div>` Nodes**: Using `dangerouslySetInnerHTML` attribute to inject HTML strings into JSX components results in the creation of an additional `<div>` node for each injection, which may affect the structure of your rendered output. Unlike Brisa, where this issue is avoided, the extra `<div>` nodes can lead to unexpected layout changes or styling issues.
 
-
 ## Contributing
 
 See [Contributing Guide](CONTRIBUTING.md) and please follow our [Code of Conduct](CODE_OF_CONDUCT.md).
-
 
 ## License
 
