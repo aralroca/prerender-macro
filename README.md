@@ -34,7 +34,7 @@
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
   <a href="#usage-with-solidjs">Solidjs</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="#usage-with-qwik">Qwik</a>
+  <a href="#usage-with-preact">Preact</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
   <a href="https://github.com/sponsors/aralroca">Sponsors</a>
   <br />
@@ -143,7 +143,7 @@ Brisa is not yet public but it will be in the next months. If you want to be upd
 
 ## Usage with React
 
-For React components, since React does not have a built-in function for injecting HTML strings directly into JSX, you need to use `dangerouslySetInnerHTML`. This allows you to bypass React's default behavior and inject raw HTML into the DOM. Here's how you can do it:
+For React components, since React does not have a built-in function for injecting HTML strings directly into JSX, you need to use `dangerouslySetInnerHTML`. This allows you to bypass React's default behavior and inject raw HTML into the DOM.
 
 Example:
 
@@ -185,14 +185,29 @@ Example:
 >
 > **Additional `<div>` Nodes**: Using `textContent` attribute to inject HTML strings into JSX components results in the creation of an additional `<div>` node for each injection, which may affect the structure of your rendered output. Unlike Brisa, where this issue is avoided, the extra `<div>` nodes can lead to unexpected layout changes or styling issues.
 
-## Usage with Qwik
+## Usage with Preact
 
-For Qwik components, since Qwik does not have a built-in function for injecting HTML strings directly into JSX, you need to use `dangerouslySetInnerHTML`. This allows you to bypass Qwik's default behavior and inject raw HTML into the DOM.
+For Preact components, since Preact does not have a built-in function for injecting HTML strings directly into JSX, you need to use `dangerouslySetInnerHTML`. This allows you to bypass Preact's default behavior and inject raw HTML into the DOM.
 
 Example:
 
 ```tsx
+import prerenderMacroPlugin from "prerender-macro";
+import { render } from "preact-render-to-string";
+import { h } from "preact";
 
+export const prerenderConfig = {
+  renderComponentToString: async (Component: any, props: any) => {
+    return render(<Component {...props} />);
+  },
+  injectToJSX: (htmlString: string) => (
+    <div dangerouslySetInnerHTML={{ __html: htmlString }} />
+  ),
+};
+
+export const plugin = prerenderMacroPlugin({
+  prerenderConfigPath: import.meta.url,
+});
 ```
 
 > [!CAUTION]

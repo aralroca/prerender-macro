@@ -1,0 +1,11 @@
+{
+  "name": "test-preact",
+  "private": true,
+  "scripts": {
+    "test": "bun test"
+  },
+  "dependencies": {
+    "preact-render-to-string": "6.4.0",
+    "prerender-macro": "workspace:*"
+  }
+}

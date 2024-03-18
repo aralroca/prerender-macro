@@ -9,16 +9,20 @@
     "@types/bun": "1.0.8",
     "@types/react": "18.2.67",
     "@types/react-dom": "18.2.22",
-    "brisa": "0.0.32"
+    "brisa": "0.0.32",
+    "solid-js": "1.8.15",
+    "preact": "10.19.7"
   },
   "dependencies": {
     "astring": "1.8.6",
     "meriyah": "4.4.0"
   },
   "scripts": {
-    "test": "bun run test:brisa && bun run test:react",
+    "test": "bun run test:brisa && bun run test:react && bun run test:preact && bun run test:solidjs",
     "test:brisa": "cd tests/brisa && bun test && cd ../..",
-    "test:react": "cd tests/react && bun test && cd ../.."
+    "test:react": "cd tests/react && bun test && cd ../..",
+    "test:solidjs": "cd tests/solidjs && bun test && cd ../..",
+    "test:preact": "cd tests/preact && bun test && cd ../.."
   },
   "workspaces": [
     "package",
