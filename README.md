@@ -1,6 +1,6 @@
 <p align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/aralroca/prerender-macro/assets/13313058/b73f8012-0dc2-4d96-aeda-b4a1b235cc9e" height="128">
+      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/aralroca/prerender-macro/assets/13313058/d51dd094-5e0a-47c8-a7e0-0599feeea09f" height="128">
       <img src="https://github.com/aralroca/prerender-macro/assets/13313058/b73f8012-0dc2-4d96-aeda-b4a1b235cc9e" height="128">
     </picture>
     <h1 align="center">Prerender Macro</h1>
