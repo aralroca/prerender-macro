@@ -3,9 +3,9 @@
   "module": "src/index.ts",
   "type": "module",
   "devDependencies": {
-    "@happy-dom/global-registrator": "13.9.0",
+    "@happy-dom/global-registrator": "13.10.1",
     "@types/bun": "1.0.8",
-    "brisa": "0.0.31"
+    "brisa": "0.0.32"
   },
   "dependencies": {
     "astring": "1.8.6",

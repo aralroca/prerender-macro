@@ -25,5 +25,5 @@ export async function prerender({
     injectStringIntoJSXModuleName
   ];
 
-  return injectStringIntoJSX(renderToString(<Component {...componentProps} />));
+  return injectStringIntoJSX(await renderToString(<Component {...componentProps} />));
 }
