@@ -58,14 +58,14 @@ export function prerenderPluginTransformation(code: string) {
     },
   });
 
-  const ast = ts.createSourceFile(
+  const sourceFile = ts.createSourceFile(
     "file.tsx",
     result.outputText,
     ts.ScriptTarget.ESNext,
     true,
     ts.ScriptKind.TSX,
   );
-  const imports = ast.statements.filter(ts.isImportDeclaration);
+  const imports = sourceFile.statements.filter(ts.isImportDeclaration);
   const importsWithPrerender = imports.filter(
     (node) =>
       node.attributes?.elements?.some(
@@ -77,6 +77,18 @@ export function prerenderPluginTransformation(code: string) {
 
   if (!importsWithPrerender.length) return code;
 
+  const modifiedAst = addPrerenderImportMacro(sourceFile);
+
+  return ts
+    .createPrinter()
+    .printNode(
+      ts.EmitHint.Unspecified,
+      modifiedAst,
+      sourceFile,
+    );
+}
+
+function addPrerenderImportMacro(ast: ts.SourceFile) {
   const importPrerenderMacro = ts.factory.createImportDeclaration(
     undefined,
     ts.factory.createImportClause(
@@ -101,14 +113,5 @@ export function prerenderPluginTransformation(code: string) {
     ),
   );
 
-  return ts
-    .createPrinter()
-    .printNode(
-      ts.EmitHint.Unspecified,
-      ts.factory.updateSourceFile(ast, [
-        importPrerenderMacro,
-        ...ast.statements,
-      ]),
-      ast,
-    );
+  return ts.factory.updateSourceFile(ast, [importPrerenderMacro, ...ast.statements]);
 }
