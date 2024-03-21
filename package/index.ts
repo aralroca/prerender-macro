@@ -54,7 +54,7 @@ export function prerenderPluginTransformation(code: string) {
     compilerOptions: {
       module: ts.ModuleKind.ESNext,
       target: ts.ScriptTarget.ESNext,
-      jsx: ts.JsxEmit.React,
+      jsx: ts.JsxEmit.Preserve,
     },
   });
 
@@ -79,13 +79,11 @@ export function prerenderPluginTransformation(code: string) {
 
   const modifiedAst = addPrerenderImportMacro(sourceFile);
 
+  traverse(modifiedAst);
+
   return ts
     .createPrinter()
-    .printNode(
-      ts.EmitHint.Unspecified,
-      modifiedAst,
-      sourceFile,
-    );
+    .printNode(ts.EmitHint.Unspecified, modifiedAst, sourceFile);
 }
 
 function addPrerenderImportMacro(ast: ts.SourceFile) {
@@ -113,5 +111,17 @@ function addPrerenderImportMacro(ast: ts.SourceFile) {
     ),
   );
 
-  return ts.factory.updateSourceFile(ast, [importPrerenderMacro, ...ast.statements]);
+  return ts.factory.updateSourceFile(ast, [
+    importPrerenderMacro,
+    ...ast.statements,
+  ]);
+}
+
+function traverse(node: ts.Node) {
+  // all call expressions:
+  if (ts.isJsxElement(node)) {
+    console.log(node.getText());
+  }
+
+  ts.forEachChild(node, traverse);
 }

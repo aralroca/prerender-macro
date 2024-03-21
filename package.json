@@ -3,7 +3,6 @@
   "module": "package/index.ts",
   "type": "module",
   "devDependencies": {
-    "typescript": "5.4.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "@types/bun": "1.0.8",
@@ -14,8 +13,7 @@
     "preact": "10.19.7"
   },
   "dependencies": {
-    "astring": "1.8.6",
-    "meriyah": "4.4.0"
+    "typescript": "5.4.2"
   },
   "scripts": {
     "test": "bun run test:brisa && bun run test:react && bun run test:preact && bun run test:solidjs",

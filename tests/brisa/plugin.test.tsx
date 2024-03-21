@@ -41,14 +41,14 @@ describe("Brisa", () => {
     `;
       const output = normalizeQuotes(prerenderPluginTransformation(input));
       const expected = normalizeQuotes(`
-      import { prerender as __prerender_macro } from "prerender-macro/prerender" with { "type": "macro" };
+      import { prerender as __prerender__macro } from "prerender-macro/prerender" with { "type": "macro" };
       import StaticComponent from "@/components/static" with { type: "prerender" };
       import DynamicComponent from "@/components/dynamic";
 
       export default function Test() {
         return (
           <div>
-            {__prerender_macro({ componentPath: "@/components/static", componentModuleName: "default", componentProps: {} })}
+            {__prerender__macro({ componentPath: "@/components/static", componentModuleName: "default", componentProps: {} })}
             <DynamicComponent />
           </div>
         );
