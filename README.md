@@ -54,8 +54,8 @@
 `prerender-macro` plugin allows to make hybrid pages between dynamic and static components, avoiding the rendering in runtime of the static ones, this rendering is done in build-time thanks to Bun's macros.
 
 ```tsx
-import StaticComponent from "@/components/static-component" with { type: "prerender" };
-import DynamicComponent from "@/components/dynamic-component";
+import StaticComponent from "@/static-component" with { type: "prerender" };
+import DynamicComponent from "@/dynamic-component";
 
 // ...
 return (
@@ -77,13 +77,13 @@ This plugin transforms the previous code to this code:
 
 ```tsx
 import { prerender } from "prerender-macro/prerender" with { "type": "macro" };
-import DynamicComponent from "@/components/dynamic-component";
+import DynamicComponent from "@/dynamic-component";
 
 // ...
 return (
   <>
     {prerender({
-      componentPath: "@/components/static",
+      componentPath: "@/static-component",
       componentModuleName: "default",
       componentProps: { foo: "bar" },
     })}
