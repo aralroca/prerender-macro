@@ -28,15 +28,15 @@
 <p align="center">Work in every JSX Framework.</p>
 
 <div align="center">
-  <a href="#about-prerender-macro">About prerender-macro</a>
+  <a href="#at-glance">At glance</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="#getting-started">Getting started</a>
+  <a href="#quick-start">Quick start</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
   <a href="https://github.com/sponsors/aralroca">Sponsors</a>
   <br />
 </div>
 
-<hr />
+<div align="center" style="margin-top: 5px">🌟</div>
 
 <div align="center">
   <a href="#usage-with-brisa-experimental">Brisa</a>
@@ -49,9 +49,9 @@
   <br />
 </div>
 
-## About `prerender-macro`
+## At glance
 
-This allows to make hybrid pages between dynamic and static components, avoiding the rendering in runtime of the static ones, this rendering is done in build-time thanks to Bun's macros.
+`prerender-macro` plugin allows to make hybrid pages between dynamic and static components, avoiding the rendering in runtime of the static ones, this rendering is done in build-time thanks to Bun's macros.
 
 ```tsx
 import StaticComponent from "@/components/static-component" with { type: "prerender" };
@@ -98,7 +98,7 @@ And pass it back through the [Bun transpiler](https://bun.sh/docs/api/transpiler
 >
 > Macros can accept **component properties**, but only in limited cases. The value must be **statically known**. For more info take a look the [Bun Macros Arguments](https://bun.sh/docs/bundler/macros#arguments) documentation.
 
-## Getting started
+## Quick start
 
 ### Install
 
