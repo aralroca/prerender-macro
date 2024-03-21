@@ -28,6 +28,17 @@
 <p align="center">Work in every JSX Framework.</p>
 
 <div align="center">
+  <a href="#about-prerender-macro">About prerender-macro</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <a href="#getting-started">Getting started</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <a href="https://github.com/sponsors/aralroca">Sponsors</a>
+  <br />
+</div>
+
+<hr />
+
+<div align="center">
   <a href="#usage-with-brisa-experimental">Brisa</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
   <a href="#usage-with-react">React</a>
@@ -35,8 +46,6 @@
   <a href="#usage-with-solidjs">Solidjs</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
   <a href="#usage-with-preact">Preact</a>
-  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://github.com/sponsors/aralroca">Sponsors</a>
   <br />
 </div>
 
@@ -51,7 +60,7 @@ import DynamicComponent from "@/components/dynamic-component";
 // ...
 return (
   <>
-    <StaticComponent />
+    <StaticComponent foo="bar" />
     <DynamicComponent />
   </>
 );
@@ -61,6 +70,33 @@ In this way:
 
 - The bundle is smaller because instead of carrying all the JS it only carries the prerendered HTML.
 - The runtime speed of rendering is faster, it only has to render the dynamic components.
+
+### How it works?
+
+This plugin transforms the previous code to this code:
+
+```tsx
+import { prerender } from "prerender-macro/prerender" with { "type": "macro" };
+import DynamicComponent from "@/components/dynamic-component";
+
+// ...
+return (
+  <>
+    {prerender({
+      componentPath: "@/components/static",
+      componentModuleName: "default",
+      componentProps: { foo: "bar" },
+    })}
+    <DynamicComponent />
+  </>
+);
+```
+
+And pass it back through the [Bun transpiler](https://bun.sh/docs/api/transpiler) to run the macro. [Bun macro](https://bun.sh/docs/bundler/macros#:~:text=Bun%20Macros%20are%20import%20statements,number%20of%20browsers%20and%20runtimes) together with the prerender helper takes care of converting the component to html `string` in build-time. This way it will only be necessary in runtime to make the rendering of those dynamic.
+
+> [!IMPORTANT]
+>
+> Macros can accept **component properties**, but only in limited cases. The value must be **statically known**. For more info take a look the [Bun Macros Arguments](https://bun.sh/docs/bundler/macros#arguments) documentation.
 
 ## Getting started
 
