@@ -1,4 +1,5 @@
 import type { BunPlugin } from "bun";
+import ts from "typescript";
 
 type PrerenderPluginParams = {
   renderToStringPath: string;
@@ -7,7 +8,6 @@ type PrerenderPluginParams = {
   injectStringIntoJSXModuleName: string;
 };
 
-const filter = new RegExp(`*.(ts|js)x$`);
 const defaultConfig: PrerenderPluginParams = {
   renderToStringPath: "brisa/server",
   renderToStringModuleName: "renderToString",
@@ -24,10 +24,17 @@ export default function prerenderPlugin({
   return {
     name: "prerender-plugin",
     setup(build) {
-      build.onLoad({ filter }, async ({ path, loader }) => ({
-        contents: prerenderPluginTransformation(await Bun.file(path).text()),
-        loader,
-      }));
+      build.onLoad(
+        { filter: /.*/, namespace: "prerender" },
+        async ({ path, loader }) => {
+          return {
+            contents: prerenderPluginTransformation(
+              await Bun.file(path).text(),
+            ),
+            loader,
+          };
+        },
+      );
     },
   } satisfies BunPlugin;
 }
@@ -43,5 +50,65 @@ export default function prerenderPlugin({
  *
  */
 export function prerenderPluginTransformation(code: string) {
-  return code;
+  const result = ts.transpileModule(code, {
+    compilerOptions: {
+      module: ts.ModuleKind.ESNext,
+      target: ts.ScriptTarget.ESNext,
+      jsx: ts.JsxEmit.React,
+    },
+  });
+
+  const ast = ts.createSourceFile(
+    "file.tsx",
+    result.outputText,
+    ts.ScriptTarget.ESNext,
+    true,
+    ts.ScriptKind.TSX,
+  );
+  const imports = ast.statements.filter(ts.isImportDeclaration);
+  const importsWithPrerender = imports.filter(
+    (node) =>
+      node.attributes?.elements?.some(
+        (element: any) =>
+          element.name.escapedText === "type" &&
+          element.value.text === "prerender",
+      ),
+  );
+
+  if (!importsWithPrerender.length) return code;
+
+  const importPrerenderMacro = ts.factory.createImportDeclaration(
+    undefined,
+    ts.factory.createImportClause(
+      false,
+      undefined,
+      ts.factory.createNamedImports([
+        ts.factory.createImportSpecifier(
+          false,
+          ts.factory.createIdentifier("prerender"),
+          ts.factory.createIdentifier("__prerender__macro"),
+        ),
+      ]),
+    ),
+    ts.factory.createStringLiteral("prerender-macro/prerender"),
+    ts.factory.createImportAttributes(
+      ts.factory.createNodeArray([
+        ts.factory.createImportAttribute(
+          ts.factory.createStringLiteral("type"),
+          ts.factory.createStringLiteral("macro"),
+        ),
+      ]),
+    ),
+  );
+
+  return ts
+    .createPrinter()
+    .printNode(
+      ts.EmitHint.Unspecified,
+      ts.factory.updateSourceFile(ast, [
+        importPrerenderMacro,
+        ...ast.statements,
+      ]),
+      ast,
+    );
 }
