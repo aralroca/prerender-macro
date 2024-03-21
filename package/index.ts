@@ -2,25 +2,12 @@ import type { BunPlugin } from "bun";
 import ts from "typescript";
 
 type PrerenderPluginParams = {
-  renderToStringPath: string;
-  renderToStringModuleName: string;
-  injectStringIntoJSXPath: string;
-  injectStringIntoJSXModuleName: string;
-};
-
-const defaultConfig: PrerenderPluginParams = {
-  renderToStringPath: "brisa/server",
-  renderToStringModuleName: "renderToString",
-  injectStringIntoJSXPath: "brisa",
-  injectStringIntoJSXModuleName: "dangerHTML",
+  prerenderConfigPath: string;
 };
 
 export default function prerenderPlugin({
-  renderToStringPath = defaultConfig.renderToStringPath,
-  renderToStringModuleName = defaultConfig.renderToStringModuleName,
-  injectStringIntoJSXPath = defaultConfig.injectStringIntoJSXPath,
-  injectStringIntoJSXModuleName = defaultConfig.injectStringIntoJSXModuleName,
-}: PrerenderPluginParams = defaultConfig) {
+  prerenderConfigPath,
+}: PrerenderPluginParams) {
   return {
     name: "prerender-plugin",
     setup(build) {
@@ -30,6 +17,7 @@ export default function prerenderPlugin({
           return {
             contents: prerenderPluginTransformation(
               await Bun.file(path).text(),
+              prerenderConfigPath,
             ),
             loader,
           };
@@ -49,7 +37,10 @@ export default function prerenderPlugin({
  * import { renderToReadableStream } from 'brisa/server';
  *
  */
-export function prerenderPluginTransformation(code: string) {
+export function prerenderPluginTransformation(
+  code: string,
+  prerenderConfigPath: string,
+) {
   const result = ts.transpileModule(code, {
     compilerOptions: {
       module: ts.ModuleKind.ESNext,

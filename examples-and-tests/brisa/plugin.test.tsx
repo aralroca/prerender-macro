@@ -1,8 +1,10 @@
+import { join } from "node:path";
 import { describe, it, expect } from "bun:test";
 import { prerenderPluginTransformation } from "prerender-macro";
 
-export const toInline = (s: string) => s.replace(/\s*\n\s*/g, "");
-export const normalizeQuotes = (s: string) => toInline(s).replaceAll("'", '"');
+const toInline = (s: string) => s.replace(/\s*\n\s*/g, "");
+const normalizeQuotes = (s: string) => toInline(s).replaceAll("'", '"');
+const configPath = join(import.meta.dir, "config.tsx");
 
 describe("Brisa", () => {
   describe("plugin", () => {
@@ -20,7 +22,9 @@ describe("Brisa", () => {
         );
       }
     `;
-      const output = normalizeQuotes(prerenderPluginTransformation(input));
+      const output = normalizeQuotes(
+        prerenderPluginTransformation(input, configPath),
+      );
       const expected = normalizeQuotes(input);
 
       expect(output).toBe(expected);
@@ -39,7 +43,9 @@ describe("Brisa", () => {
         );
       }
     `;
-      const output = normalizeQuotes(prerenderPluginTransformation(input));
+      const output = normalizeQuotes(
+        prerenderPluginTransformation(input, configPath),
+      );
       const expected = normalizeQuotes(`
       import { prerender as __prerender__macro } from "prerender-macro/prerender" with { "type": "macro" };
       import StaticComponent from "@/components/static" with { type: "prerender" };
