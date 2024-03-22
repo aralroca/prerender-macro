@@ -1,6 +1,6 @@
 import { join } from "node:path";
 import { describe, it, expect } from "bun:test";
-import { prerenderPluginTransformation } from "prerender-macro";
+import { transpile } from "prerender-macro";
 
 const toInline = (s: string) => s.replace(/\s*\n\s*/g, "");
 const normalizeQuotes = (s: string) => toInline(s).replaceAll("'", '"');
@@ -22,9 +22,7 @@ describe("Brisa", () => {
         );
       }
     `;
-      const output = normalizeQuotes(
-        prerenderPluginTransformation(input, configPath),
-      );
+      const output = normalizeQuotes(transpile(input, configPath));
       const expected = normalizeQuotes(input);
 
       expect(output).toBe(expected);
@@ -43,9 +41,7 @@ describe("Brisa", () => {
         );
       }
     `;
-      const output = normalizeQuotes(
-        prerenderPluginTransformation(input, configPath),
-      );
+      const output = normalizeQuotes(transpile(input, configPath));
       const expected = normalizeQuotes(`
       import { prerender as __prerender__macro } from "prerender-macro/prerender" with { "type": "macro" };
       import StaticComponent from "@/components/static" with { type: "prerender" };

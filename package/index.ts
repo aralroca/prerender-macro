@@ -1,51 +1,25 @@
 import type { BunPlugin } from "bun";
-import ts from "typescript";
+import ts, { type ImportDeclaration } from "typescript";
 
-type PrerenderPluginParams = {
-  prerenderConfigPath: string;
-};
+type PrerenderPluginParams = { prerenderConfigPath: string };
 
-export default function prerenderPlugin({
-  prerenderConfigPath,
-}: PrerenderPluginParams) {
+export default function plugin({ prerenderConfigPath }: PrerenderPluginParams) {
   return {
     name: "prerender-plugin",
     setup(build) {
       build.onLoad(
         { filter: /.*/, namespace: "prerender" },
-        async ({ path, loader }) => {
-          return {
-            contents: prerenderPluginTransformation(
-              await Bun.file(path).text(),
-              prerenderConfigPath,
-            ),
-            loader,
-          };
-        },
+        async ({ path, loader }) => ({
+          contents: transpile(await Bun.file(path).text(), prerenderConfigPath),
+          loader,
+        }),
       );
     },
   } satisfies BunPlugin;
 }
 
-export function prerenderPluginTransformation(
-  code: string,
-  prerenderConfigPath: string,
-) {
-  const result = ts.transpileModule(code, {
-    compilerOptions: {
-      module: ts.ModuleKind.ESNext,
-      target: ts.ScriptTarget.ESNext,
-      jsx: ts.JsxEmit.Preserve,
-    },
-  });
-
-  const sourceFile = ts.createSourceFile(
-    "file.tsx",
-    result.outputText,
-    ts.ScriptTarget.ESNext,
-    true,
-    ts.ScriptKind.TSX,
-  );
+export function transpile(code: string, prerenderConfigPath: string) {
+  const sourceFile = createSourceFile(code);
   const importsWithPrerender = getImportsWithPrerender(sourceFile);
 
   if (!importsWithPrerender.length) return code;
@@ -57,6 +31,57 @@ export function prerenderPluginTransformation(
   return ts
     .createPrinter()
     .printNode(ts.EmitHint.Unspecified, modifiedAst, sourceFile);
+}
+
+function createSourceFile(code: string) {
+  const result = ts.transpileModule(code, {
+    compilerOptions: {
+      module: ts.ModuleKind.ESNext,
+      target: ts.ScriptTarget.ESNext,
+      jsx: ts.JsxEmit.Preserve,
+    },
+  });
+
+  return ts.createSourceFile(
+    "file.tsx",
+    result.outputText,
+    ts.ScriptTarget.ESNext,
+    true,
+    ts.ScriptKind.TSX,
+  );
+}
+
+function getImportsWithPrerender(sourceFile: ts.SourceFile) {
+  return sourceFile.statements.filter(isPrerenderImport).flatMap((node) => {
+    const namedExports = node.importClause?.namedBindings as ts.NamedImports;
+
+    if (namedExports) {
+      return namedExports.elements.map((element) => ({
+        identifier: element.name.getText(),
+        path: node.moduleSpecifier.getText(),
+        moduleName: element.propertyName?.getText() ?? element.name.getText(),
+      }));
+    }
+
+    return {
+      identifier: node.importClause?.getText(),
+      path: node.moduleSpecifier.getText(),
+      moduleName: "default",
+    };
+  });
+}
+
+function isPrerenderImport(node: ts.Node): node is ts.ImportDeclaration {
+  return (
+    ts.isImportDeclaration(node) &&
+    Boolean(
+      node.attributes?.elements?.some(
+        (element: any) =>
+          element.name.getText() === "type" &&
+          element.value.text === "prerender",
+      ),
+    )
+  );
 }
 
 function addPrerenderImportMacro(ast: ts.SourceFile) {
@@ -88,36 +113,6 @@ function addPrerenderImportMacro(ast: ts.SourceFile) {
     importPrerenderMacro,
     ...ast.statements,
   ]);
-}
-
-function getImportsWithPrerender(sourceFile: ts.SourceFile) {
-  return sourceFile.statements
-    .filter(ts.isImportDeclaration)
-    .filter(
-      (node) =>
-        node.attributes?.elements?.some(
-          (element: any) =>
-            element.name.getText() === "type" &&
-            element.value.text === "prerender",
-        ),
-    )
-    .flatMap((node) => {
-      const namedExports = node.importClause?.namedBindings as ts.NamedImports;
-
-      if (namedExports) {
-        return namedExports.elements.map((element) => ({
-          identifier: element.name.getText(),
-          path: node.moduleSpecifier.getText(),
-          moduleName: element.propertyName?.getText() ?? element.name.getText(),
-        }));
-      }
-
-      return {
-        identifier: node.importClause?.getText(),
-        path: node.moduleSpecifier.getText(),
-        moduleName: "default",
-      };
-    });
 }
 
 function traverse(node: ts.Node) {
