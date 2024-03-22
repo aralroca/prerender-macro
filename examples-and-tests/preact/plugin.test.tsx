@@ -9,7 +9,7 @@ const currentFile = import.meta.url.replace("file://", "");
 describe("Preact", () => {
   describe("plugin", () => {
     it('should not transform if there is not an import attribute with type "prerender"', () => {
-      const input = `
+      const code = `
       import Foo from "./components";
       import { Bar } from "./components";
 
@@ -22,13 +22,15 @@ describe("Preact", () => {
         );
       }
     `;
-      const output = format(transpile(input, currentFile, configPath));
-      const expected = format(input);
+      const output = format(
+        transpile({ code, path: currentFile, prerenderConfigPath: configPath }),
+      );
+      const expected = format(code);
 
       expect(output).toBe(expected);
     });
     it("should transform a static component", () => {
-      const input = `
+      const code = `
       import Foo from "./components" with { type: "prerender" };
       import { Bar } from "./components";
 
@@ -41,7 +43,9 @@ describe("Preact", () => {
         );
       }
     `;
-      const output = format(transpile(input, currentFile, configPath));
+      const output = format(
+        transpile({ code, path: currentFile, prerenderConfigPath: configPath }),
+      );
       const expected = format(`
       import Foo from "./components";
       import {Bar} from "./components";
@@ -59,7 +63,7 @@ describe("Preact", () => {
     });
 
     it("should transform a static component from named export", () => {
-      const input = `
+      const code = `
       import { Bar } from "./components" with { type: "prerender" };
       import Foo from "./components";
 
@@ -72,7 +76,9 @@ describe("Preact", () => {
         );
       }
     `;
-      const output = format(transpile(input, currentFile, configPath));
+      const output = format(
+        transpile({ code, path: currentFile, prerenderConfigPath: configPath }),
+      );
       const expected = format(`
         import {Bar} from "./components";
         import Foo from "./components";
@@ -91,14 +97,16 @@ describe("Preact", () => {
     });
 
     it("should transform a static component when is not inside JSX", () => {
-      const input = `
+      const code = `
         import { Bar } from "./components" with { type: "prerender" };
 
         export default function Test() {
           return <Bar />;
         }
     `;
-      const output = format(transpile(input, currentFile, configPath));
+      const output = format(
+        transpile({ code, path: currentFile, prerenderConfigPath: configPath }),
+      );
       const expected = format(`
         import {Bar} from "./components";
         
@@ -111,14 +119,16 @@ describe("Preact", () => {
     });
 
     it("should transform a static component with props", () => {
-      const input = `
+      const code = `
         import Foo from "./components" with { type: "prerender" };
 
         export default function Test() {
           return <Foo name="Preact" nested={{ foo: ' works' }} />;
         }
     `;
-      const output = format(transpile(input, currentFile, configPath));
+      const output = format(
+        transpile({ code, path: currentFile, prerenderConfigPath: configPath }),
+      );
       const expected = format(`
         import Foo from "./components";
         

@@ -134,10 +134,10 @@ It is necessary to do it this way because this configuration will be executed wh
 
 The `prerenderConfig` named export needs this mandatory configuration to work:
 
-| Parameter    | Description                                                                                                         | Mandatory |
-| ------------ | ------------------------------------------------------------------------------------------------------------------- | --------- |
-| `render`     | Function to render the component on your framework ([AOT](https://en.wikipedia.org/wiki/Ahead-of-time_compilation)) | `true`    |
-| `postRender` | Function to make a post rendering in runtime ([JIT](https://en.wikipedia.org/wiki/Just-in-time_compilation))        | `false`   |
+| Parameter    | Description                                                                                                         | Mandatory | Can be async |
+| ------------ | ------------------------------------------------------------------------------------------------------------------- | --------- | ------------ |
+| `render`     | Function to render the component on your framework ([AOT](https://en.wikipedia.org/wiki/Ahead-of-time_compilation)) | `true`    | `yes`        |
+| `postRender` | Function to make a post rendering in runtime ([JIT](https://en.wikipedia.org/wiki/Just-in-time_compilation))        | `false`   | `no`         |
 
 > [!NOTE]
 >
@@ -157,14 +157,14 @@ The `prerenderConfig` named export needs this mandatory configuration to work:
 Configuration example:
 
 ```tsx
-import prerenderMacroPlugin from "prerender-macro";
+import prerenderMacroPlugin, { type Config } from "prerender-macro";
 import { dangerHTML } from "brisa";
 import { renderToString } from "brisa/server";
 
 export const prerenderConfig = {
-  render: async (Component: any, props: any) =>
+  render: async (Component, props) =>
     dangerHTML(await renderToString(<Component {...props} />)),
-};
+} satisfies Config;
 
 export const plugin = prerenderMacroPlugin({
   prerenderConfigPath: import.meta.url,
@@ -192,7 +192,7 @@ For React components, since React does not have a built-in function for injectin
 Configuration example:
 
 ```tsx
-import prerenderMacroPlugin from "prerender-macro";
+import prerenderMacroPlugin, { type Config } from "prerender-macro";
 import { renderToString } from "react-dom/server";
 
 export const prerenderConfig = {
@@ -202,7 +202,7 @@ export const prerenderConfig = {
   postRender: (htmlString) => (
     <div dangerouslySetInnerHTML={{ __html: htmlString }} />
   ),
-};
+} satisfies Config;
 
 export const plugin = prerenderMacroPlugin({
   prerenderConfigPath: import.meta.url,
@@ -240,19 +240,19 @@ For Preact components, since Preact does not have a built-in function for inject
 Configuration example:
 
 ```tsx
-import prerenderMacroPlugin from "prerender-macro";
+import prerenderMacroPlugin, { type Config } from "prerender-macro";
 import { render } from "preact-render-to-string";
 import { h } from "preact";
 
 export const prerenderConfig = {
-  render: async (Component: any, props: any) => {
+  render: async (Component, props) => {
     return (
       <div
         dangerouslySetInnerHTML={{ __html: render(<Component {...props} />) }}
       />
     );
   },
-};
+} satisfies Config;
 
 export const plugin = prerenderMacroPlugin({
   prerenderConfigPath: import.meta.url,

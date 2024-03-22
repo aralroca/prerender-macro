@@ -10,7 +10,7 @@ const currentFile = import.meta.url.replace("file://", "");
 describe("Brisa", () => {
   describe("plugin", () => {
     it('should not transform if there is not an import attribute with type "prerender"', () => {
-      const input = `
+      const code = `
       import Foo from "./components";
       import { Bar } from "./components";
 
@@ -23,13 +23,15 @@ describe("Brisa", () => {
         );
       }
     `;
-      const output = normalizeQuotes(transpile(input, currentFile, configPath));
-      const expected = normalizeQuotes(input);
+      const output = normalizeQuotes(
+        transpile({ code, path: currentFile, prerenderConfigPath: configPath }),
+      );
+      const expected = normalizeQuotes(code);
 
       expect(output).toBe(expected);
     });
     it("should transform a static component", () => {
-      const input = `
+      const code = `
       import Foo from "./components" with { type: "prerender" };
       import { Bar } from "./components";
 
@@ -42,7 +44,9 @@ describe("Brisa", () => {
         );
       }
     `;
-      const output = normalizeQuotes(transpile(input, currentFile, configPath));
+      const output = normalizeQuotes(
+        transpile({ code, path: currentFile, prerenderConfigPath: configPath }),
+      );
       const expected = normalizeQuotes(`
       import Foo from "./components";
       import {Bar} from "./components";
@@ -59,7 +63,7 @@ describe("Brisa", () => {
     });
 
     it("should transform a static component from named export", () => {
-      const input = `
+      const code = `
       import { Bar } from "./components" with { type: "prerender" };
       import Foo from "./components";
 
@@ -72,7 +76,9 @@ describe("Brisa", () => {
         );
       }
     `;
-      const output = normalizeQuotes(transpile(input, currentFile, configPath));
+      const output = normalizeQuotes(
+        transpile({ code, path: currentFile, prerenderConfigPath: configPath }),
+      );
       const expected = normalizeQuotes(`
         import {Bar} from "./components";
         import Foo from "./components";
@@ -89,14 +95,16 @@ describe("Brisa", () => {
     });
 
     it("should transform a static component when is not inside JSX", () => {
-      const input = `
+      const code = `
         import { Bar } from "./components" with { type: "prerender" };
 
         export default function Test() {
           return <Bar />;
         }
     `;
-      const output = normalizeQuotes(transpile(input, currentFile, configPath));
+      const output = normalizeQuotes(
+        transpile({ code, path: currentFile, prerenderConfigPath: configPath }),
+      );
       const expected = normalizeQuotes(`
         import {Bar} from "./components";
         
@@ -109,14 +117,16 @@ describe("Brisa", () => {
     });
 
     it("should transform a static component with props", () => {
-      const input = `
+      const code = `
         import Foo from "./components" with { type: "prerender" };
 
         export default function Test() {
           return <Foo name="Brisa" nested={{ foo: ' works' }} />;
         }
     `;
-      const output = normalizeQuotes(transpile(input, currentFile, configPath));
+      const output = normalizeQuotes(
+        transpile({ code, path: currentFile, prerenderConfigPath: configPath }),
+      );
       const expected = normalizeQuotes(`
         import Foo from "./components";
         

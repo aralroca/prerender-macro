@@ -6,18 +6,28 @@ const transpiler = new Bun.Transpiler({ loader: "tsx" });
 
 type PrerenderPluginParams = { prerenderConfigPath: string };
 
+export type Config = {
+  render: (
+    Component: any,
+    props: any,
+  ) => JSX.Element | string | Promise<JSX.Element | string>;
+  postRender?: (htmlString: string) => JSX.Element;
+};
+
 export default function plugin({ prerenderConfigPath }: PrerenderPluginParams) {
   return {
     name: "prerender-plugin",
-    setup(build) {
+    async setup(build) {
+      const config = await import(prerenderConfigPath);
       build.onLoad(
         { filter: /.*/, namespace: "prerender" },
         async ({ path, loader }) => ({
-          contents: transpile(
-            await Bun.file(path).text(),
+          contents: transpile({
+            code: await Bun.file(path).text(),
             path,
             prerenderConfigPath,
-          ),
+            config,
+          }),
           loader,
         }),
       );
@@ -25,22 +35,29 @@ export default function plugin({ prerenderConfigPath }: PrerenderPluginParams) {
   } satisfies BunPlugin;
 }
 
-export function transpile(
-  code: string,
-  path: string,
-  prerenderConfigPath: string,
-) {
+export function transpile({
+  code,
+  path,
+  prerenderConfigPath,
+  config,
+}: {
+  code: string;
+  path: string;
+  prerenderConfigPath: string;
+  config?: Config;
+}) {
   const sourceFile = createSourceFile(code);
   const importsWithPrerender = getImportsWithPrerender(sourceFile, path);
 
   if (!importsWithPrerender.length) return code;
 
-  let modifiedAst = addPrerenderImportMacro(sourceFile);
+  let modifiedAst = addExtraImports(sourceFile, config);
 
   modifiedAst = replaceJSXToMacroCall(
     modifiedAst,
     importsWithPrerender,
     prerenderConfigPath,
+    config,
   ) as ts.SourceFile;
 
   const modifiedCode = ts
@@ -110,35 +127,50 @@ function isPrerenderImport(node: ts.Node): node is ts.ImportDeclaration {
   );
 }
 
-function addPrerenderImportMacro(ast: ts.SourceFile) {
-  const importPrerenderMacro = ts.factory.createImportDeclaration(
-    undefined,
-    ts.factory.createImportClause(
-      false,
+function addExtraImports(ast: ts.SourceFile, config?: Config) {
+  const allImports = [...ast.statements];
+
+  allImports.unshift(
+    ts.factory.createImportDeclaration(
       undefined,
-      ts.factory.createNamedImports([
-        ts.factory.createImportSpecifier(
-          false,
-          ts.factory.createIdentifier("prerender"),
-          ts.factory.createIdentifier("__prerender__macro"),
-        ),
-      ]),
-    ),
-    ts.factory.createStringLiteral("prerender-macro/prerender"),
-    ts.factory.createImportAttributes(
-      ts.factory.createNodeArray([
-        ts.factory.createImportAttribute(
-          ts.factory.createStringLiteral("type"),
-          ts.factory.createStringLiteral("macro"),
-        ),
-      ]),
+      ts.factory.createImportClause(
+        false,
+        undefined,
+        ts.factory.createNamedImports([
+          ts.factory.createImportSpecifier(
+            false,
+            ts.factory.createIdentifier("prerender"),
+            ts.factory.createIdentifier("__prerender__macro"),
+          ),
+        ]),
+      ),
+      ts.factory.createStringLiteral("prerender-macro/prerender"),
+      ts.factory.createImportAttributes(
+        ts.factory.createNodeArray([
+          ts.factory.createImportAttribute(
+            ts.factory.createStringLiteral("type"),
+            ts.factory.createStringLiteral("macro"),
+          ),
+        ]),
+      ),
     ),
   );
 
-  return ts.factory.updateSourceFile(ast, [
-    importPrerenderMacro,
-    ...ast.statements,
-  ]);
+  if (config?.postRender) {
+    allImports.unshift(
+      ts.factory.createImportDeclaration(
+        undefined,
+        ts.factory.createImportClause(
+          false,
+          ts.factory.createIdentifier("prerenderConfig"),
+          undefined,
+        ),
+        ts.factory.createStringLiteral("prerender-macro"),
+      ),
+    );
+  }
+
+  return ts.factory.updateSourceFile(ast, allImports);
 }
 
 /**
@@ -158,6 +190,7 @@ function replaceJSXToMacroCall(
   node: ts.Node,
   imports: any[],
   prerenderConfigPath: string,
+  config?: Config,
   context?: ts.TransformationContext,
 ): ts.Node {
   if (ts.isJsxSelfClosingElement(node) || ts.isJsxOpeningElement(node)) {
@@ -184,7 +217,7 @@ function replaceJSXToMacroCall(
         }
       }
 
-      const macroCall = ts.factory.createCallExpression(
+      let macroCall = ts.factory.createCallExpression(
         ts.factory.createIdentifier("__prerender__macro"),
         undefined,
         [
@@ -209,6 +242,18 @@ function replaceJSXToMacroCall(
         ],
       );
 
+      // Wrap with postRender function
+      if (config?.postRender) {
+        macroCall = ts.factory.createCallExpression(
+          ts.factory.createPropertyAccessExpression(
+            ts.factory.createIdentifier("prerenderConfig"),
+            ts.factory.createIdentifier("postRender"),
+          ),
+          undefined,
+          [macroCall],
+        );
+      }
+
       if (node.parent && ts.isJsxElement(node.parent)) {
         return ts.factory.createJsxExpression(undefined, macroCall);
       }
@@ -220,7 +265,13 @@ function replaceJSXToMacroCall(
   return ts.visitEachChild(
     node,
     (child) =>
-      replaceJSXToMacroCall(child, imports, prerenderConfigPath, context),
+      replaceJSXToMacroCall(
+        child,
+        imports,
+        prerenderConfigPath,
+        config,
+        context,
+      ),
     context,
   );
 }
