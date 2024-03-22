@@ -18,7 +18,15 @@ export async function prerender({
     componentProps,
   );
 
-  return config.injectToJSX(htmlString);
+  const element = config.injectToJSX(htmlString);
+
+  // parse + stringify are used to avoid coercion to Bun's AST for $$typeof Symbol
+  return JSON.parse(JSON.stringify(element));
+}
+
+export function postRender(element: JSX.Element) {
+  element.$$typeof = Symbol.for("react.element");
+  return element;
 }
 
 export const __prerender__macro = prerender;
