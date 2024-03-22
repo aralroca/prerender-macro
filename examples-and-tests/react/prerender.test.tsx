@@ -12,13 +12,7 @@ describe("React", () => {
         prerenderConfigPath: join(import.meta.dir, "config.tsx"),
       });
 
-      expect(result).toStrictEqual(
-        <div
-          dangerouslySetInnerHTML={{
-            __html: "<div>Foo, <!-- -->React<!-- -->!</div>",
-          }}
-        />,
-      );
+      expect(result).toBe("<div>Foo, <!-- -->React<!-- -->!</div>");
     });
     it("should work with named export", async () => {
       const result = await prerender({
@@ -28,13 +22,7 @@ describe("React", () => {
         prerenderConfigPath: join(import.meta.dir, "config.tsx"),
       });
 
-      expect(result).toStrictEqual(
-        <div
-          dangerouslySetInnerHTML={{
-            __html: "<div>Bar, <!-- -->React<!-- -->!</div>",
-          }}
-        />,
-      );
+      expect(result).toBe("<div>Bar, <!-- -->React<!-- -->!</div>");
     });
   });
 });

@@ -27,27 +27,20 @@
 
 <p align="center">Work in every JSX Framework.</p>
 
-<div align="center">
-  <a href="#at-glance">At glance</a>
-  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="#quick-start">Quick start</a>
-  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://github.com/sponsors/aralroca">Sponsors</a>
-  <br />
-</div>
-
-<div align="center" style="margin-top: 5px">🌟</div>
-
-<div align="center">
-  <a href="#usage-with-brisa-experimental">Brisa</a>
-  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="#usage-with-react">React</a>
-  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="#usage-with-solidjs">Solidjs</a>
-  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="#usage-with-preact">Preact</a>
-  <br />
-</div>
+- [At glance](#at-glance)
+  - [How it works?](#how-it-works)
+- [Quick start](#quick-start)
+  - [Install](#install)
+  - [Use it in `Bun.build`](#use-it-in-bunbuild)
+- [Configuration](#configuration)
+- [Configuration examples in different frameworks](#configuration-examples-in-different-frameworks)
+  - [Brisa](#brisa-experimental)
+  - [React](#react)
+  - [Solidjs](#solidjs)
+  - [Preact](#preact)
+  - [Add your framework example](#add-your-framework-example)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## At glance
 
@@ -106,15 +99,17 @@ And pass it back through the [Bun transpiler](https://bun.sh/docs/api/transpiler
 bun install prerender-macro
 ```
 
-## Use it in `Bun.build`
+### Use it in `Bun.build`
+
+To use it you have to set the `prerenderConfigPath` (**mandatory**), which is the path where you have the configuration export, if it is in the same file you can use `import.meta.url`.
 
 ```tsx
 import prerenderMacroPlugin from "prerender-macro";
 
 // The configuration should be adapted to the framework that you are using:
 export const prerenderConfig = {
-  render: (Component, props): string => /* */,
-  postRender: (htmlString: string): JSX.Element => /* */
+  render: (Component, props) => /* mandatory */,
+  postRender: () => /* optional */
 };
 
 Bun.build({
@@ -148,11 +143,11 @@ The `prerenderConfig` named export needs this mandatory configuration to work:
 >
 > It is not necessary to indicate the `jsx-runtime`, it will work with the one you have and it can connect with **any JSX framework**.
 
-## Examples
+## Configuration examples in different frameworks
 
-## Usage with Brisa _(experimental)_
+### Brisa _(experimental)_
 
-Example:
+Configuration example:
 
 ```tsx
 import prerenderMacroPlugin from "prerender-macro";
@@ -183,11 +178,11 @@ export const plugin = prerenderMacroPlugin({
 
 Brisa is not yet public but it will be in the next months. If you want to be updated, subscribe to my [blog newsletter](https://aralroca.com/blog).
 
-## Usage with React
+### React
 
 For React components, since React does not have a built-in function for injecting HTML strings directly into JSX, you need to use `dangerouslySetInnerHTML`. This allows you to bypass React's default behavior and inject raw HTML into the DOM.
 
-Example:
+Configuration example:
 
 ```tsx
 import prerenderMacroPlugin from "prerender-macro";
@@ -213,15 +208,15 @@ export const plugin = prerenderMacroPlugin({
 
 > [!CAUTION]
 >
-> **Additional `<div>` Nodes**: Using `dangerouslySetInnerHTML` to inject HTML strings into JSX components results in the creation of an additional `<div>` node for each injection, which may affect the structure of your rendered output. Unlike Brisa, where this issue is avoided, the extra `<div>` nodes can lead to unexpected layout changes or styling issues.
+> **Additional `<div>` Nodes**: Using `dangerouslySetInnerHTML` to inject HTML strings into JSX components results in the creation of an additional `<div>` node for each injection, which may affect the structure of your rendered output. Unlike [Brisa](#brisa-experimental), where this issue is avoided, the extra `<div>` nodes can lead to unexpected layout changes or styling issues.
 
-## Usage with Solidjs
+### Solidjs
 
 For Solidjs components, since Solidjs does not have a built-in function for injecting HTML strings directly into JSX, you need to use `textContent` attribute. This allows you to bypass Solidjs's default behavior and inject raw HTML into the DOM.
 
 Besides, the solidjs `render` has to be slightly modified.
 
-Example:
+Configuration example:
 
 ```tsx
 
@@ -229,13 +224,13 @@ Example:
 
 > [!CAUTION]
 >
-> **Additional `<div>` Nodes**: Using `textContent` attribute to inject HTML strings into JSX components results in the creation of an additional `<div>` node for each injection, which may affect the structure of your rendered output. Unlike Brisa, where this issue is avoided, the extra `<div>` nodes can lead to unexpected layout changes or styling issues.
+> **Additional `<div>` Nodes**: Using `textContent` attribute to inject HTML strings into JSX components results in the creation of an additional `<div>` node for each injection, which may affect the structure of your rendered output. Unlike [Brisa](#brisa-experimental), where this issue is avoided, the extra `<div>` nodes can lead to unexpected layout changes or styling issues.
 
-## Usage with Preact
+### Preact
 
 For Preact components, since Preact does not have a built-in function for injecting HTML strings directly into JSX, you need to use `dangerouslySetInnerHTML`. This allows you to bypass Preact's default behavior and inject raw HTML into the DOM.
 
-Example:
+Configuration example:
 
 ```tsx
 import prerenderMacroPlugin from "prerender-macro";
@@ -263,7 +258,11 @@ export const plugin = prerenderMacroPlugin({
 
 > [!CAUTION]
 >
-> **Additional `<div>` Nodes**: Using `dangerouslySetInnerHTML` attribute to inject HTML strings into JSX components results in the creation of an additional `<div>` node for each injection, which may affect the structure of your rendered output. Unlike Brisa, where this issue is avoided, the extra `<div>` nodes can lead to unexpected layout changes or styling issues.
+> **Additional `<div>` Nodes**: Using `dangerouslySetInnerHTML` attribute to inject HTML strings into JSX components results in the creation of an additional `<div>` node for each injection, which may affect the structure of your rendered output. Unlike [Brisa](#brisa-experimental), where this issue is avoided, the extra `<div>` nodes can lead to unexpected layout changes or styling issues.
+
+### Add your framework example
+
+This project is open-source and totally open for you to contribute by adding the JSX framework you use, I'm sure it can help a lot of people.
 
 ## Contributing
 
