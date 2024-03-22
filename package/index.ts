@@ -164,6 +164,26 @@ function replaceJSXToMacroCall(
     const module = imports.find((i) => i.identifier === node.tagName.getText());
 
     if (module) {
+      const props: ts.ObjectLiteralElementLike[] = [];
+
+      for (const attr of node.attributes.properties) {
+        if (ts.isJsxAttribute(attr)) {
+          const propName = attr.name.getText();
+          let propValue = attr.initializer as ts.Expression;
+
+          if (ts.isJsxExpression(propValue)) {
+            propValue = propValue.expression as ts.Expression;
+          }
+
+          props.push(
+            ts.factory.createPropertyAssignment(
+              ts.factory.createIdentifier(propName),
+              propValue,
+            ),
+          );
+        }
+      }
+
       const macroCall = ts.factory.createCallExpression(
         ts.factory.createIdentifier("__prerender__macro"),
         undefined,
@@ -179,7 +199,7 @@ function replaceJSXToMacroCall(
             ),
             ts.factory.createPropertyAssignment(
               ts.factory.createIdentifier("componentProps"),
-              ts.factory.createObjectLiteralExpression([]),
+              ts.factory.createObjectLiteralExpression(props),
             ),
             ts.factory.createPropertyAssignment(
               ts.factory.createIdentifier("prerenderConfigPath"),

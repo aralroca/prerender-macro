@@ -1,7 +1,18 @@
-export default function Foo({ name }: { name: string }) {
-  return <div>Foo, {name}!</div>;
+export default function Foo({
+  name = "foo",
+  nested = {},
+}: {
+  name: string;
+  nested: { foo?: string };
+}) {
+  return (
+    <div>
+      Foo, {name}
+      {nested.foo}!
+    </div>
+  );
 }
 
-export function Bar({ name }: { name: string }) {
+export function Bar({ name = "bar" }: { name: string }) {
   return <div>Bar, {name}!</div>;
 }

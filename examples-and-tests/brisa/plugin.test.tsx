@@ -49,7 +49,7 @@ describe("Brisa", () => {
       
       export default function Test() {
         return jsxDEV("div", {
-          children: [{type: "HTML",props: {html: "<div>Foo, !</div>"}},
+          children: [{type: "HTML",props: {html: "<div>Foo, foo!</div>"}},
           jsxDEV(Bar, {}, undefined, false, undefined, this)
         ]}, undefined, true, undefined, this);
       }
@@ -80,7 +80,7 @@ describe("Brisa", () => {
         export default function Test() {
           return jsxDEV("div", {
             children: [jsxDEV(Foo, {}, undefined, false, undefined, this),
-              {type: "HTML",props: {html: "<div>Bar, !</div>"}}
+              {type: "HTML",props: {html: "<div>Bar, bar!</div>"}}
             ]}, undefined, true, undefined, this)
           ;}
     `);
@@ -101,7 +101,27 @@ describe("Brisa", () => {
         import {Bar} from "./components";
         
         export default function Test() {
-          return {type: "HTML",props: {html: "<div>Bar, !</div>"}};
+          return {type: "HTML",props: {html: "<div>Bar, bar!</div>"}};
+        }
+      `);
+
+      expect(output).toBe(expected);
+    });
+
+    it("should transform a static component with props", () => {
+      const input = `
+        import Foo from "./components" with { type: "prerender" };
+
+        export default function Test() {
+          return <Foo name="Brisa" nested={{ foo: ' works' }} />;
+        }
+    `;
+      const output = normalizeQuotes(transpile(input, currentFile, configPath));
+      const expected = normalizeQuotes(`
+        import Foo from "./components";
+        
+        export default function Test() {
+          return {type: "HTML",props: {html: "<div>Foo, Brisa works!</div>"}};
         }
       `);
 
