@@ -113,8 +113,8 @@ import prerenderMacroPlugin from "prerender-macro";
 
 // The configuration should be adapted to the framework that you are using:
 export const prerenderConfig = {
-  renderComponentToString: (Component, props): string => /* */,
-  injectToJSX: (htmlString: string): JSX.Element => /* */
+  render: (Component, props): string => /* */,
+  postRender: (htmlString: string): JSX.Element => /* */
 };
 
 Bun.build({
@@ -139,10 +139,10 @@ It is necessary to do it this way because this configuration will be executed wh
 
 The `prerenderConfig` named export needs this mandatory configuration to work:
 
-| Parameter                 | Description                                               | Mandatory |
-| ------------------------- | --------------------------------------------------------- | --------- |
-| `renderComponentToString` | Function to transform `Component` and `props` to `string` | `true`    |
-| `injectToJSX`             | Function to inject `string` to `JSX.Element`              | `true`    |
+| Parameter    | Description                                               | Mandatory |
+| ------------ | --------------------------------------------------------- | --------- |
+| `render`     | Function to transform `Component` and `props` to `string` | `true`    |
+| `postRender` | Function to inject `string` to `JSX.Element`              | `true`    |
 
 > [!NOTE]
 >
@@ -160,10 +160,10 @@ import { dangerHTML } from "brisa";
 import { renderToString } from "brisa/server";
 
 export const prerenderConfig = {
-  renderComponentToString: (Component, props) => {
+  render: (Component, props) => {
     return renderToString(<Component {...props} />);
   },
-  injectToJSX: dangerHTML,
+  postRender: dangerHTML,
 };
 
 export const plugin = prerenderMacroPlugin({
@@ -188,10 +188,10 @@ import prerenderMacroPlugin from "prerender-macro";
 import { renderToString } from "react-dom/server";
 
 export const prerenderConfig = {
-  renderComponentToString: async (Component, props) => {
+  render: async (Component, props) => {
     return renderToString(<Component {...props} />);
   },
-  injectToJSX: (htmlString) => (
+  postRender: (htmlString) => (
     <div dangerouslySetInnerHTML={{ __html: htmlString }} />
   ),
 };
@@ -209,7 +209,7 @@ export const plugin = prerenderMacroPlugin({
 
 For Solidjs components, since Solidjs does not have a built-in function for injecting HTML strings directly into JSX, you need to use `textContent` attribute. This allows you to bypass Solidjs's default behavior and inject raw HTML into the DOM.
 
-Besides, the solidjs `renderComponentToString` has to be slightly modified.
+Besides, the solidjs `render` has to be slightly modified.
 
 Example:
 
@@ -233,10 +233,10 @@ import { render } from "preact-render-to-string";
 import { h } from "preact";
 
 export const prerenderConfig = {
-  renderComponentToString: async (Component: any, props: any) => {
+  render: async (Component: any, props: any) => {
     return render(<Component {...props} />);
   },
-  injectToJSX: (htmlString: string) => (
+  postRender: (htmlString: string) => (
     <div dangerouslySetInnerHTML={{ __html: htmlString }} />
   ),
 };
