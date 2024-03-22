@@ -10,14 +10,14 @@ describe("Brisa", () => {
   describe("plugin", () => {
     it('should not transform if there is not an import attribute with type "prerender"', () => {
       const input = `
-      import StaticComponent from "@/components/static";
-      import DynamicComponent from "@/components/dynamic";
+      import Foo from "@/components";
+      import { Bar } from "@/components";
 
       export default function Test() {
         return (
           <div>
-            <StaticComponent />
-            <DynamicComponent />
+            <Foo />
+            <Bar />
           </div>
         );
       }
@@ -29,14 +29,14 @@ describe("Brisa", () => {
     });
     it("should transform a static component without props", () => {
       const input = `
-      import StaticComponent from "@/components/static" with { type: "prerender" };
-      import DynamicComponent from "@/components/dynamic";
+      import Foo from "@/components" with { type: "prerender" };
+      import { Bar } from "@/components";
 
       export default function Test() {
         return (
           <div>
-            <StaticComponent />
-            <DynamicComponent />
+            <Foo />
+            <Bar />
           </div>
         );
       }
@@ -44,14 +44,14 @@ describe("Brisa", () => {
       const output = normalizeQuotes(transpile(input, configPath));
       const expected = normalizeQuotes(`
       import { prerender as __prerender__macro } from "prerender-macro/prerender" with { "type": "macro" };
-      import StaticComponent from "@/components/static" with { type: "prerender" };
-      import DynamicComponent from "@/components/dynamic";
+      import Foo from "@/components" with { type: "prerender" };
+      import { Bar } from "@/components";
 
       export default function Test() {
         return (
           <div>
-            {__prerender__macro({ componentPath: "@/components/static", componentModuleName: "default", componentProps: {} })}
-            <DynamicComponent />
+            {__prerender__macro({ componentPath: "@/components", componentModuleName: "default", componentProps: {}, prerenderConfigPath: "${configPath}" })}
+            <Bar />
           </div>
         );
       }

@@ -62,14 +62,16 @@ function getImportsWithPrerender(sourceFile: ts.SourceFile) {
     if (namedExports) {
       return namedExports.elements.map((element) => ({
         identifier: element.name.getText(),
-        path: node.moduleSpecifier.getText(),
+        path:
+          (node.moduleSpecifier as any).text ?? node.moduleSpecifier.getText(),
         moduleName: element.propertyName?.getText() ?? element.name.getText(),
       }));
     }
 
     return {
       identifier: node.importClause?.getText(),
-      path: node.moduleSpecifier.getText(),
+      path:
+        (node.moduleSpecifier as any).text ?? node.moduleSpecifier.getText(),
       moduleName: "default",
     };
   });
@@ -121,8 +123,15 @@ function addPrerenderImportMacro(ast: ts.SourceFile) {
 
 /**
  *
- * Replace <StaticComponent />
- * to __prerender__macro({ componentPath: "path/to/component.tsx", componentModuleName: "StaticComponent", componentProps: {}, prerenderConfigPath: "path/to/config.tsx" })
+ * Replace
+ *  <StaticComponent />
+ * to
+ * __prerender__macro({
+ *  componentPath: "path/to/component.tsx",
+ *  componentModuleName: "StaticComponent",
+ *  componentProps: {},
+ *  prerenderConfigPath: "path/to/config.tsx"
+ * });
  *
  */
 function replaceJSXToMacroCall(
@@ -131,11 +140,8 @@ function replaceJSXToMacroCall(
   prerenderConfigPath: string,
   context?: ts.TransformationContext,
 ): ts.Node {
-  if (
-    ts.isIdentifier(node) &&
-    node.parent?.parent?.kind === ts.SyntaxKind.JsxElement
-  ) {
-    const module = imports.find((i) => i.identifier === node.text);
+  if (ts.isJsxSelfClosingElement(node) || ts.isJsxOpeningElement(node)) {
+    const module = imports.find((i) => i.identifier === node.tagName.getText());
 
     if (module) {
       const macroCall = ts.factory.createCallExpression(
@@ -163,7 +169,11 @@ function replaceJSXToMacroCall(
         ],
       );
 
-      return ts.factory.createExpressionStatement(macroCall);
+      if (node.parent && ts.isJsxElement(node.parent)) {
+        return ts.factory.createJsxExpression(undefined, macroCall);
+      }
+
+      return macroCall;
     }
   }
 
