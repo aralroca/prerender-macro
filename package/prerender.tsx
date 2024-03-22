@@ -13,12 +13,7 @@ export async function prerender({
 }: PrerenderParams) {
   const Component = (await import(componentPath))[componentModuleName];
   const config = (await import(prerenderConfigPath)).prerenderConfig;
-  const htmlString = await config.render(Component, componentProps);
-
-  const element = config.postRender(htmlString);
-
-  // parse + stringify are used to avoid coercion to Bun's AST for $$typeof Symbol
-  return JSON.parse(JSON.stringify(element));
+  return await config.render(Component, componentProps);
 }
 
 export function postRender(element: JSX.Element) {

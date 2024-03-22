@@ -51,8 +51,7 @@ describe("Preact", () => {
           children: [{type: "div",props: {
             dangerouslySetInnerHTML: {__html: "<div>Foo, foo!</div>"
           }},
-          __k: null,__: null,__b: 0,__e: null,__c: null,__v: 4,__i: -1,__u: 0},
-          jsxDEV(Bar, {}, undefined, false, undefined, this)]}, undefined, true, undefined, this);
+          key: undefined,ref: undefined,__k: null,__: null,__b: 0,__e: null,__d: undefined,__c: null,constructor: undefined,__v: 4,__i: -1,__u: 0},jsxDEV(Bar, {}, undefined, false, undefined, this)]}, undefined, true, undefined, this);
         }
     `);
 
@@ -84,9 +83,7 @@ describe("Preact", () => {
               type: "div",props: {dangerouslySetInnerHTML: {
                 __html: "<div>Bar, bar!</div>"
               }
-            },
-            __k: null,__: null,__b: 0,__e: null,__c: null,__v: 8,__i: -1,__u: 0}]
-          }, undefined, true, undefined, this);
+            },key: undefined,ref: undefined,__k: null,__: null,__b: 0,__e: null,__d: undefined,__c: null,constructor: undefined,__v: 8,__i: -1,__u: 0}]}, undefined, true, undefined, this);
         }
     `);
 
@@ -106,7 +103,7 @@ describe("Preact", () => {
         import {Bar} from "./components";
         
         export default function Test() {
-          return {type: "div",props: {dangerouslySetInnerHTML: {__html: "<div>Bar, bar!</div>"}},__k: null,__: null,__b: 0,__e: null,__c: null,__v: 12,__i: -1,__u: 0};
+          return {type: "div",props: {dangerouslySetInnerHTML: {__html: "<div>Bar, bar!</div>"}},key: undefined,ref: undefined,__k: null,__: null,__b: 0,__e: null,__d: undefined,__c: null,constructor: undefined,__v: 12,__i: -1,__u: 0};
         }
       `);
 
@@ -126,7 +123,7 @@ describe("Preact", () => {
         import Foo from "./components";
         
         export default function Test() {
-          return {type: "div",props: {dangerouslySetInnerHTML: {__html: "<div>Foo, Preact works!</div>"}},__k: null,__: null,__b: 0,__e: null,__c: null,__v: 16,__i: -1,__u: 0};
+          return {type: "div",props: {dangerouslySetInnerHTML: {__html: "<div>Foo, Preact works!</div>"}},key: undefined,ref: undefined,__k: null,__: null,__b: 0,__e: null,__d: undefined,__c: null,constructor: undefined,__v: 16,__i: -1,__u: 0};
         }
       `);
 

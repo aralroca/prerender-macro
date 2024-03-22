@@ -160,10 +160,8 @@ import { dangerHTML } from "brisa";
 import { renderToString } from "brisa/server";
 
 export const prerenderConfig = {
-  render: (Component, props) => {
-    return renderToString(<Component {...props} />);
-  },
-  postRender: dangerHTML,
+  render: async (Component: any, props: any) =>
+    dangerHTML(await renderToString(<Component {...props} />)),
 };
 
 export const plugin = prerenderMacroPlugin({
@@ -234,11 +232,12 @@ import { h } from "preact";
 
 export const prerenderConfig = {
   render: async (Component: any, props: any) => {
-    return render(<Component {...props} />);
+    return (
+      <div
+        dangerouslySetInnerHTML={{ __html: render(<Component {...props} />) }}
+      />
+    );
   },
-  postRender: (htmlString: string) => (
-    <div dangerouslySetInnerHTML={{ __html: htmlString }} />
-  ),
 };
 
 export const plugin = prerenderMacroPlugin({

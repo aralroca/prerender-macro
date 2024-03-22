@@ -3,9 +3,10 @@ import { h } from "preact";
 
 export const prerenderConfig = {
   render: async (Component: any, props: any) => {
-    return render(<Component {...props} />);
+    return (
+      <div
+        dangerouslySetInnerHTML={{ __html: render(<Component {...props} />) }}
+      />
+    );
   },
-  postRender: (htmlString: string) => (
-    <div dangerouslySetInnerHTML={{ __html: htmlString }} />
-  ),
 };
