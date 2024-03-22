@@ -5,7 +5,7 @@ type PrerenderParams = {
   prerenderConfigPath: string;
 };
 
-export async function prerender({
+export async function __prerender__macro({
   componentPath,
   componentModuleName = "default",
   componentProps = {},
@@ -20,3 +20,5 @@ export async function prerender({
 
   return config.injectToJSX(htmlString);
 }
+
+export const prerender = __prerender__macro;

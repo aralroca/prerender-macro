@@ -1,5 +1,8 @@
 import type { BunPlugin } from "bun";
+import { dirname } from "node:path";
 import ts from "typescript";
+
+const transpiler = new Bun.Transpiler({ loader: "tsx" });
 
 type PrerenderPluginParams = { prerenderConfigPath: string };
 
@@ -10,7 +13,11 @@ export default function plugin({ prerenderConfigPath }: PrerenderPluginParams) {
       build.onLoad(
         { filter: /.*/, namespace: "prerender" },
         async ({ path, loader }) => ({
-          contents: transpile(await Bun.file(path).text(), prerenderConfigPath),
+          contents: transpile(
+            await Bun.file(path).text(),
+            path,
+            prerenderConfigPath,
+          ),
           loader,
         }),
       );
@@ -18,9 +25,13 @@ export default function plugin({ prerenderConfigPath }: PrerenderPluginParams) {
   } satisfies BunPlugin;
 }
 
-export function transpile(code: string, prerenderConfigPath: string) {
+export function transpile(
+  code: string,
+  path: string,
+  prerenderConfigPath: string,
+) {
   const sourceFile = createSourceFile(code);
-  const importsWithPrerender = getImportsWithPrerender(sourceFile);
+  const importsWithPrerender = getImportsWithPrerender(sourceFile, path);
 
   if (!importsWithPrerender.length) return code;
 
@@ -32,9 +43,12 @@ export function transpile(code: string, prerenderConfigPath: string) {
     prerenderConfigPath,
   ) as ts.SourceFile;
 
-  return ts
+  const modifiedCode = ts
     .createPrinter()
     .printNode(ts.EmitHint.Unspecified, modifiedAst, sourceFile);
+
+  // This is totally necessary to execute the Bun macros
+  return transpiler.transformSync(modifiedCode);
 }
 
 function createSourceFile(code: string) {
@@ -55,23 +69,29 @@ function createSourceFile(code: string) {
   );
 }
 
-function getImportsWithPrerender(sourceFile: ts.SourceFile) {
+function getImportsWithPrerender(sourceFile: ts.SourceFile, path: string) {
+  const dir = dirname(path);
+
   return sourceFile.statements.filter(isPrerenderImport).flatMap((node) => {
     const namedExports = node.importClause?.namedBindings as ts.NamedImports;
 
     if (namedExports) {
       return namedExports.elements.map((element) => ({
         identifier: element.name.getText(),
-        path:
+        path: Bun.resolveSync(
           (node.moduleSpecifier as any).text ?? node.moduleSpecifier.getText(),
+          dir,
+        ),
         moduleName: element.propertyName?.getText() ?? element.name.getText(),
       }));
     }
 
     return {
       identifier: node.importClause?.getText(),
-      path:
+      path: Bun.resolveSync(
         (node.moduleSpecifier as any).text ?? node.moduleSpecifier.getText(),
+        dir,
+      ),
       moduleName: "default",
     };
   });
