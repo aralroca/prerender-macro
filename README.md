@@ -169,6 +169,14 @@ export const plugin = prerenderMacroPlugin({
 });
 ```
 
+> [!NOTE]
+>
+> Brisa elements can be seamlessly coerced with Bun's AST and everything can be done AOT without having to use a `postRender`.
+
+> [!NOTE]
+>
+> Brisa does not add extra nodes in the HTML, so it is a prerender of the real component, without modifying its structure.
+
 > [!WARNING]
 >
 > Brisa is an _experimental_ framework that we are building.
@@ -198,6 +206,10 @@ export const plugin = prerenderMacroPlugin({
   prerenderConfigPath: import.meta.url,
 });
 ```
+
+> [!IMPORTANT]
+>
+> React elements have the `$$typeof` symbol and therefore cannot coerce to Bun's AST. This is why it is necessary to do the `postRender` in [JIT](https://en.wikipedia.org/wiki/Just-in-time_compilation).
 
 > [!CAUTION]
 >
@@ -244,6 +256,10 @@ export const plugin = prerenderMacroPlugin({
   prerenderConfigPath: import.meta.url,
 });
 ```
+
+> [!NOTE]
+>
+> Preact elements can be seamlessly coerced with Bun's AST and everything can be done AOT without having to use a `postRender`.
 
 > [!CAUTION]
 >
