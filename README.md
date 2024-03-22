@@ -139,10 +139,10 @@ It is necessary to do it this way because this configuration will be executed wh
 
 The `prerenderConfig` named export needs this mandatory configuration to work:
 
-| Parameter    | Description                                               | Mandatory |
-| ------------ | --------------------------------------------------------- | --------- |
-| `render`     | Function to transform `Component` and `props` to `string` | `true`    |
-| `postRender` | Function to inject `string` to `JSX.Element`              | `true`    |
+| Parameter    | Description                                                                                                         | Mandatory |
+| ------------ | ------------------------------------------------------------------------------------------------------------------- | --------- |
+| `render`     | Function to render the component on your framework ([AOT](https://en.wikipedia.org/wiki/Ahead-of-time_compilation)) | `true`    |
+| `postRender` | Function to make a post rendering in runtime ([JIT](https://en.wikipedia.org/wiki/Just-in-time_compilation))        | `false`   |
 
 > [!NOTE]
 >
