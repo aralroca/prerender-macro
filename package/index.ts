@@ -27,16 +27,6 @@ export default function prerenderPlugin({
   } satisfies BunPlugin;
 }
 
-/**
- *
- * import { prerender } from "@/utils/prerender" with { type: 'macro' };
- *
- * {prerender('@/components/static-component', 'default')}
- *
- * import { dangerHTML } from 'brisa';
- * import { renderToReadableStream } from 'brisa/server';
- *
- */
 export function prerenderPluginTransformation(
   code: string,
   prerenderConfigPath: string,
@@ -56,15 +46,7 @@ export function prerenderPluginTransformation(
     true,
     ts.ScriptKind.TSX,
   );
-  const imports = sourceFile.statements.filter(ts.isImportDeclaration);
-  const importsWithPrerender = imports.filter(
-    (node) =>
-      node.attributes?.elements?.some(
-        (element: any) =>
-          element.name.escapedText === "type" &&
-          element.value.text === "prerender",
-      ),
-  );
+  const importsWithPrerender = getImportsWithPrerender(sourceFile);
 
   if (!importsWithPrerender.length) return code;
 
@@ -108,10 +90,40 @@ function addPrerenderImportMacro(ast: ts.SourceFile) {
   ]);
 }
 
+function getImportsWithPrerender(sourceFile: ts.SourceFile) {
+  return sourceFile.statements
+    .filter(ts.isImportDeclaration)
+    .filter(
+      (node) =>
+        node.attributes?.elements?.some(
+          (element: any) =>
+            element.name.getText() === "type" &&
+            element.value.text === "prerender",
+        ),
+    )
+    .flatMap((node) => {
+      const namedExports = node.importClause?.namedBindings as ts.NamedImports;
+
+      if (namedExports) {
+        return namedExports.elements.map((element) => ({
+          identifier: element.name.getText(),
+          path: node.moduleSpecifier.getText(),
+          moduleName: element.propertyName?.getText() ?? element.name.getText(),
+        }));
+      }
+
+      return {
+        identifier: node.importClause?.getText(),
+        path: node.moduleSpecifier.getText(),
+        moduleName: "default",
+      };
+    });
+}
+
 function traverse(node: ts.Node) {
   // all call expressions:
   if (ts.isJsxElement(node)) {
-    console.log(node.getText());
+    // console.log(node.openingElement.tagName);
   }
 
   ts.forEachChild(node, traverse);
