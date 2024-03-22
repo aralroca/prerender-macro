@@ -1,5 +1,5 @@
 import type { BunPlugin } from "bun";
-import ts, { type ImportDeclaration } from "typescript";
+import ts from "typescript";
 
 type PrerenderPluginParams = { prerenderConfigPath: string };
 
@@ -24,9 +24,13 @@ export function transpile(code: string, prerenderConfigPath: string) {
 
   if (!importsWithPrerender.length) return code;
 
-  const modifiedAst = addPrerenderImportMacro(sourceFile);
+  let modifiedAst = addPrerenderImportMacro(sourceFile);
 
-  traverse(modifiedAst);
+  modifiedAst = replaceJSXToMacroCall(
+    modifiedAst,
+    importsWithPrerender,
+    prerenderConfigPath,
+  ) as ts.SourceFile;
 
   return ts
     .createPrinter()
@@ -115,11 +119,58 @@ function addPrerenderImportMacro(ast: ts.SourceFile) {
   ]);
 }
 
-function traverse(node: ts.Node) {
-  // all call expressions:
-  if (ts.isJsxElement(node)) {
-    // console.log(node.openingElement.tagName);
+/**
+ *
+ * Replace <StaticComponent />
+ * to __prerender__macro({ componentPath: "path/to/component.tsx", componentModuleName: "StaticComponent", componentProps: {}, prerenderConfigPath: "path/to/config.tsx" })
+ *
+ */
+function replaceJSXToMacroCall(
+  node: ts.Node,
+  imports: any[],
+  prerenderConfigPath: string,
+  context?: ts.TransformationContext,
+): ts.Node {
+  if (
+    ts.isIdentifier(node) &&
+    node.parent?.parent?.kind === ts.SyntaxKind.JsxElement
+  ) {
+    const module = imports.find((i) => i.identifier === node.text);
+
+    if (module) {
+      const macroCall = ts.factory.createCallExpression(
+        ts.factory.createIdentifier("__prerender__macro"),
+        undefined,
+        [
+          ts.factory.createObjectLiteralExpression([
+            ts.factory.createPropertyAssignment(
+              ts.factory.createIdentifier("componentPath"),
+              ts.factory.createStringLiteral(module.path),
+            ),
+            ts.factory.createPropertyAssignment(
+              ts.factory.createIdentifier("componentModuleName"),
+              ts.factory.createStringLiteral(module.moduleName),
+            ),
+            ts.factory.createPropertyAssignment(
+              ts.factory.createIdentifier("componentProps"),
+              ts.factory.createObjectLiteralExpression([]),
+            ),
+            ts.factory.createPropertyAssignment(
+              ts.factory.createIdentifier("prerenderConfigPath"),
+              ts.factory.createStringLiteral(prerenderConfigPath),
+            ),
+          ]),
+        ],
+      );
+
+      return ts.factory.createExpressionStatement(macroCall);
+    }
   }
 
-  ts.forEachChild(node, traverse);
+  return ts.visitEachChild(
+    node,
+    (child) =>
+      replaceJSXToMacroCall(child, imports, prerenderConfigPath, context),
+    context,
+  );
 }
