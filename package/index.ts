@@ -19,7 +19,7 @@ export default function plugin({ prerenderConfigPath }: PrerenderPluginParams) {
   return {
     name: "prerender-plugin",
     async setup(build) {
-      const config = await import(prerenderConfigPath);
+      const config = (await import(prerenderConfigPath))?.prerenderConfig;
       build.onLoad({ filter: /\.(tsx|jsx)$/ }, async ({ path, loader }) => {
         const code = await Bun.file(path).text();
 
