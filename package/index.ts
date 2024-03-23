@@ -19,18 +19,23 @@ export default function plugin({ prerenderConfigPath }: PrerenderPluginParams) {
     name: "prerender-plugin",
     async setup(build) {
       const config = await import(prerenderConfigPath);
-      build.onLoad(
-        { filter: /.*/, namespace: "prerender" },
-        async ({ path, loader }) => ({
-          contents: transpile({
-            code: await Bun.file(path).text(),
+      build.onLoad({ filter: /\.(tsx|jsx)$/ }, async ({ path, loader }) => {
+        const code = await Bun.file(path).text();
+
+        try {
+          const contents = transpile({
+            code,
             path,
             prerenderConfigPath,
             config,
-          }),
-          loader,
-        }),
-      );
+          });
+
+          return { contents, loader };
+        } catch (e) {
+          console.error(e);
+          return { contents: code, loader };
+        }
+      });
     },
   } satisfies BunPlugin;
 }

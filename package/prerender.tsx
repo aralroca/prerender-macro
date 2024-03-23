@@ -16,9 +16,4 @@ export async function prerender({
   return await config.render(Component, componentProps);
 }
 
-export function postRender(element: JSX.Element) {
-  element.$$typeof = Symbol.for("react.element");
-  return element;
-}
-
 export const __prerender__macro = prerender;
