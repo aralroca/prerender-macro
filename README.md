@@ -259,11 +259,12 @@ This project is open-source and totally open for you to contribute by adding the
 
 To add your framework you have to:
 
-- Create a folder inside "examples-and-tests" with your framework that is a copy of some other framework.
-- Make the changes and adapt the tests in the folder to make your JSX framework work with prerender-macro.
-- Update the package.json to run also the tests of your framework in the pipeline.
-- Update the README.md adding the documentation of your framework.
-- PR
+- Fork & clone
+- Create a folder inside [`tests`](/tests/) with your framework that is a copy of some other framework. The same for [`examples`](/examples/).
+- Make the changes and adapt the example and tests to your framework
+- Update the package.json scripts to add your framework
+- Update the [`README.md`](/README.md) adding the documentation of your framework.
+- Open a PR with the changes.
 
 ## Contributing
 
