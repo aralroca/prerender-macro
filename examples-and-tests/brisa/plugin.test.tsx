@@ -7,6 +7,9 @@ const normalizeQuotes = (s: string) => toInline(s).replaceAll("'", '"');
 const configPath = join(import.meta.dir, "config.tsx");
 const currentFile = import.meta.url.replace("file://", "");
 
+const jsxRuntimePath = import.meta.resolveSync("brisa/jsx-dev-runtime");
+const importJSXRuntime = `import {jsx, jsxDEV} from "${jsxRuntimePath}";`;
+
 describe("Brisa", () => {
   describe("plugin", () => {
     it('should not transform if there is not an import attribute with type "prerender"', () => {
@@ -48,6 +51,7 @@ describe("Brisa", () => {
         transpile({ code, path: currentFile, prerenderConfigPath: configPath }),
       );
       const expected = normalizeQuotes(`
+      ${importJSXRuntime}
       import Foo from "./components";
       import {Bar} from "./components";
       
@@ -80,6 +84,7 @@ describe("Brisa", () => {
         transpile({ code, path: currentFile, prerenderConfigPath: configPath }),
       );
       const expected = normalizeQuotes(`
+        ${importJSXRuntime}
         import {Bar} from "./components";
         import Foo from "./components";
         
@@ -106,6 +111,7 @@ describe("Brisa", () => {
         transpile({ code, path: currentFile, prerenderConfigPath: configPath }),
       );
       const expected = normalizeQuotes(`
+        ${importJSXRuntime}
         import {Bar} from "./components";
         
         export default function Test() {
@@ -128,6 +134,7 @@ describe("Brisa", () => {
         transpile({ code, path: currentFile, prerenderConfigPath: configPath }),
       );
       const expected = normalizeQuotes(`
+        ${importJSXRuntime}
         import Foo from "./components";
         
         export default function Test() {

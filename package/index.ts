@@ -3,6 +3,7 @@ import { dirname } from "node:path";
 import ts from "typescript";
 
 const transpiler = new Bun.Transpiler({ loader: "tsx" });
+const JSX_RUNTIME = ["jsx-runtime", "jsx-dev-runtime"];
 
 type PrerenderPluginParams = { prerenderConfigPath: string };
 
@@ -69,8 +70,7 @@ export function transpile({
     .createPrinter()
     .printNode(ts.EmitHint.Unspecified, modifiedAst, sourceFile);
 
-  // This is totally necessary to execute the Bun macros
-  return transpiler.transformSync(modifiedCode);
+  return runMacros(modifiedCode);
 }
 
 function createSourceFile(code: string) {
@@ -279,4 +279,32 @@ function replaceJSXToMacroCall(
       ),
     context,
   );
+}
+
+function runMacros(code: string) {
+  // This is totally necessary to execute the Bun macros
+  let codeAfterMacros = transpiler.transformSync(code);
+
+  // WORKAROUND: Find the JSX runtime to add the import
+  // Issue: https://github.com/oven-sh/bun/issues/7499
+  if (!globalThis.jsxRuntime) {
+    for (let key of globalThis.Loader.registry.keys()) {
+      if (JSX_RUNTIME.some((k) => key.includes(k))) {
+        globalThis.jsxRuntime = key;
+        break;
+      }
+    }
+  }
+
+  // WORKAROUND: Add the JSX runtime import
+  // Issue: https://github.com/oven-sh/bun/issues/7499
+  if (globalThis.jsxRuntime) {
+    codeAfterMacros = `import {jsx, jsxDEV} from "${globalThis.jsxRuntime}";\n${codeAfterMacros}`;
+  }
+
+  return codeAfterMacros;
+}
+
+declare global {
+  var jsxRuntime: string | undefined;
 }

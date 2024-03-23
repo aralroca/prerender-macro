@@ -7,6 +7,8 @@ const toInline = (s: string) => s.replace(/\s*\n\s*/g, "");
 const normalizeQuotes = (s: string) => toInline(s).replaceAll("'", '"');
 const configPath = join(import.meta.dir, "config.tsx");
 const currentFile = import.meta.url.replace("file://", "");
+const jsxRuntimePath = import.meta.resolveSync("react/jsx-dev-runtime");
+const importJSXRuntime = `import {jsx, jsxDEV} from "${jsxRuntimePath}";`;
 
 describe("React", () => {
   describe("plugin", () => {
@@ -59,6 +61,7 @@ describe("React", () => {
         }),
       );
       const expected = normalizeQuotes(`
+        ${importJSXRuntime}
         import prerenderConfig from "prerender-macro";
         import Foo from "./components";
         import {Bar} from "./components";
@@ -98,6 +101,7 @@ describe("React", () => {
         }),
       );
       const expected = normalizeQuotes(`
+        ${importJSXRuntime}
         import prerenderConfig from "prerender-macro";
         import {Bar} from "./components";
         import Foo from "./components";
@@ -132,6 +136,7 @@ describe("React", () => {
         }),
       );
       const expected = normalizeQuotes(`
+        ${importJSXRuntime}
         import prerenderConfig from "prerender-macro";
         import {Bar} from "./components";
         
@@ -162,6 +167,7 @@ describe("React", () => {
         }),
       );
       const expected = normalizeQuotes(`
+        ${importJSXRuntime}
         import prerenderConfig from "prerender-macro";
         import Foo from "./components";
         
