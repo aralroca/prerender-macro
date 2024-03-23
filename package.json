@@ -1,5 +1,6 @@
 {
   "name": "prerender-macro",
+  "version": "0.0.1",
   "module": "package/index.ts",
   "type": "module",
   "devDependencies": {
@@ -14,9 +15,6 @@
   "dependencies": {
     "typescript": "5.4.3"
   },
-  "files": [
-    "package"
-  ],
   "scripts": {
     "test": "bun run test:brisa && bun run test:react && bun run test:preact",
     "test:brisa": "cd examples-and-tests/brisa && bun test && cd ../..",
@@ -26,5 +24,18 @@
   "workspaces": [
     "package",
     "examples-and-tests/*"
-  ]
+  ],
+  "files": [
+    "package"
+  ],
+  "exports": {
+    ".": {
+      "import": "./package/index.ts",
+      "require": "./package/index.ts"
+    },
+    "./prerender": {
+      "import": "./package/prerender.ts",
+      "require": "./package/prerender.ts"
+    }
+  }
 }
