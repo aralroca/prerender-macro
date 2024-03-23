@@ -1,6 +1,6 @@
 {
   "name": "prerender-macro",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "module": "package/index.ts",
   "type": "module",
   "devDependencies": {
@@ -34,8 +34,8 @@
       "require": "./package/index.ts"
     },
     "./prerender": {
-      "import": "./package/prerender.ts",
-      "require": "./package/prerender.ts"
+      "import": "./package/prerender.tsx",
+      "require": "./package/prerender.tsx"
     }
   }
 }
