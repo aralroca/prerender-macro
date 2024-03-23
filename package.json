@@ -5,21 +5,22 @@
   "devDependencies": {
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "@types/bun": "1.0.8",
-    "@types/react": "18.2.67",
+    "@types/bun": "1.0.10",
+    "@types/react": "18.2.69",
     "@types/react-dom": "18.2.22",
-    "brisa": "0.0.32",
-    "solid-js": "1.8.15",
-    "preact": "10.19.7"
+    "brisa": "0.0.34",
+    "preact": "10.20.1"
   },
   "dependencies": {
-    "typescript": "5.4.2"
+    "typescript": "5.4.3"
   },
+  "files": [
+    "package"
+  ],
   "scripts": {
-    "test": "bun run test:brisa && bun run test:react && bun run test:preact && bun run test:solidjs",
+    "test": "bun run test:brisa && bun run test:react && bun run test:preact",
     "test:brisa": "cd examples-and-tests/brisa && bun test && cd ../..",
     "test:react": "cd examples-and-tests/react && bun test && cd ../..",
-    "test:solidjs": "cd examples-and-tests/solidjs && bun test && cd ../..",
     "test:preact": "cd examples-and-tests/preact && bun test && cd ../.."
   },
   "workspaces": [

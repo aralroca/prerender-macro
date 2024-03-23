@@ -5,7 +5,7 @@
     "test": "bun test"
   },
   "dependencies": {
-    "preact-render-to-string": "6.4.0",
+    "preact-render-to-string": "6.4.1",
     "prerender-macro": "workspace:*"
   }
 }

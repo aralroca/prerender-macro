@@ -36,7 +36,6 @@
 - [Configuration examples in different frameworks](#configuration-examples-in-different-frameworks)
   - [Brisa](#brisa-experimental)
   - [React](#react)
-  - [Solidjs](#solidjs)
   - [Preact](#preact)
   - [Add your framework example](#add-your-framework-example)
 - [Contributing](#contributing)
@@ -149,8 +148,11 @@ The `prerenderConfig` named export needs this mandatory configuration to work:
 | ---------------------------- | -------------------- | ----------------- | ---------------------------- |
 | [Brisa](#brisa-experimental) | ✅                   | ✅                | ✅                           |
 | [React](#react)              | ✅                   | ❌                | ❌                           |
-| [Solidjs](#solidjs)          | ✅                   | -                 | ❌                           |
 | [Preact](#preact)            | ✅                   | ✅                | ❌                           |
+
+> [!TIP]
+>
+> 👉 [Add your framework](#add-your-framework-example)
 
 ### Brisa _(experimental)_
 
@@ -217,22 +219,6 @@ export const plugin = prerenderMacroPlugin({
 >
 > **Additional `<div>` Nodes**: Using `dangerouslySetInnerHTML` to inject HTML strings into JSX components results in the creation of an additional `<div>` node for each injection, which may affect the structure of your rendered output. Unlike [Brisa](#brisa-experimental), where this issue is avoided, the extra `<div>` nodes can lead to unexpected layout changes or styling issues.
 
-### Solidjs
-
-For Solidjs components, since Solidjs does not have a built-in function for injecting HTML strings directly into JSX, you need to use `textContent` attribute. This allows you to bypass Solidjs's default behavior and inject raw HTML into the DOM.
-
-Besides, the solidjs `render` has to be slightly modified.
-
-Configuration example:
-
-```tsx
-
-```
-
-> [!CAUTION]
->
-> **Additional `<div>` Nodes**: Using `textContent` attribute to inject HTML strings into JSX components results in the creation of an additional `<div>` node for each injection, which may affect the structure of your rendered output. Unlike [Brisa](#brisa-experimental), where this issue is avoided, the extra `<div>` nodes can lead to unexpected layout changes or styling issues.
-
 ### Preact
 
 For Preact components, since Preact does not have a built-in function for injecting HTML strings directly into JSX, you need to use `dangerouslySetInnerHTML`. This allows you to bypass Preact's default behavior and inject raw HTML into the DOM.
@@ -270,6 +256,14 @@ export const plugin = prerenderMacroPlugin({
 ### Add your framework example
 
 This project is open-source and totally open for you to contribute by adding the JSX framework you use, I'm sure it can help a lot of people.
+
+To add your framework you have to:
+
+- Create a folder inside "examples-and-tests" with your framework that is a copy of some other framework.
+- Make the changes and adapt the tests in the folder to make your JSX framework work with prerender-macro.
+- Update the package.json to run also the tests of your framework in the pipeline.
+- Update the README.md adding the documentation of your framework.
+- PR
 
 ## Contributing
 
