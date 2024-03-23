@@ -1,6 +1,6 @@
 {
   "name": "prerender-macro",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "module": "package/index.ts",
   "type": "module",
   "devDependencies": {
