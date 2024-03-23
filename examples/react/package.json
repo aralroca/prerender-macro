@@ -1,0 +1,22 @@
+{
+  "name": "react-example",
+  "private": true,
+  "module": "build.tsx",
+  "type": "module",
+  "scripts": {
+    "start": "bun run src/build.ts && bun run dist/index.js"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "5.4.3"
+  },
+  "dependencies": {
+    "@types/react": "18.2.69",
+    "@types/react-dom": "18.2.22",
+    "prerender-macro": "0.0.6",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  }
+}

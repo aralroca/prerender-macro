@@ -17,13 +17,15 @@
   },
   "scripts": {
     "test": "bun run test:brisa && bun run test:react && bun run test:preact",
-    "test:brisa": "cd examples-and-tests/brisa && bun test && cd ../..",
-    "test:react": "cd examples-and-tests/react && bun test && cd ../..",
-    "test:preact": "cd examples-and-tests/preact && bun test && cd ../.."
+    "test:brisa": "cd tests/brisa && bun test && cd ../..",
+    "test:react": "cd tests/react && bun test && cd ../..",
+    "test:preact": "cd tests/preact && bun test && cd ../..",
+    "demo:react": "cd examples/react && bun start"
   },
   "workspaces": [
     "package",
-    "examples-and-tests/*"
+    "tests/*",
+    "examples/*"
   ],
   "files": [
     "package"

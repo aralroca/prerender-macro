@@ -176,7 +176,7 @@ function addExtraImports(
           ts.factory.createNamedImports([
             ts.factory.createImportSpecifier(
               false,
-              ts.factory.createIdentifier("prerenderConfig"),
+              undefined,
               ts.factory.createIdentifier("prerenderConfig"),
             ),
           ]),
