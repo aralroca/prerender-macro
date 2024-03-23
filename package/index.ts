@@ -1,6 +1,7 @@
 import type { BunPlugin } from "bun";
 import { dirname } from "node:path";
 import ts from "typescript";
+import { prerender } from "./prerender";
 
 const transpiler = new Bun.Transpiler({ loader: "tsx" });
 const JSX_RUNTIME = ["jsx-runtime", "jsx-dev-runtime"];
@@ -57,7 +58,7 @@ export function transpile({
 
   if (!importsWithPrerender.length) return code;
 
-  let modifiedAst = addExtraImports(sourceFile, config);
+  let modifiedAst = addExtraImports(sourceFile, prerenderConfigPath, config);
 
   modifiedAst = replaceJSXToMacroCall(
     modifiedAst,
@@ -132,7 +133,11 @@ function isPrerenderImport(node: ts.Node): node is ts.ImportDeclaration {
   );
 }
 
-function addExtraImports(ast: ts.SourceFile, config?: Config) {
+function addExtraImports(
+  ast: ts.SourceFile,
+  prerenderConfigPath: string,
+  config?: Config,
+) {
   const allImports = [...ast.statements];
 
   allImports.unshift(
@@ -167,10 +172,16 @@ function addExtraImports(ast: ts.SourceFile, config?: Config) {
         undefined,
         ts.factory.createImportClause(
           false,
-          ts.factory.createIdentifier("prerenderConfig"),
           undefined,
+          ts.factory.createNamedImports([
+            ts.factory.createImportSpecifier(
+              false,
+              ts.factory.createIdentifier("prerenderConfig"),
+              ts.factory.createIdentifier("prerenderConfig"),
+            ),
+          ]),
         ),
-        ts.factory.createStringLiteral("prerender-macro"),
+        ts.factory.createStringLiteral(prerenderConfigPath),
       ),
     );
   }

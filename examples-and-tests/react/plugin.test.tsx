@@ -9,6 +9,7 @@ const configPath = join(import.meta.dir, "config.tsx");
 const currentFile = import.meta.url.replace("file://", "");
 const jsxRuntimePath = import.meta.resolveSync("react/jsx-dev-runtime");
 const importJSXRuntime = `import {jsx, jsxDEV} from "${jsxRuntimePath}";`;
+const importConfig = `import {prerenderConfig} from "${configPath}";`;
 
 describe("React", () => {
   describe("plugin", () => {
@@ -62,7 +63,7 @@ describe("React", () => {
       );
       const expected = normalizeQuotes(`
         ${importJSXRuntime}
-        import prerenderConfig from "prerender-macro";
+        ${importConfig}
         import Foo from "./components";
         import {Bar} from "./components";
         
@@ -102,7 +103,7 @@ describe("React", () => {
       );
       const expected = normalizeQuotes(`
         ${importJSXRuntime}
-        import prerenderConfig from "prerender-macro";
+        ${importConfig}
         import {Bar} from "./components";
         import Foo from "./components";
         
@@ -137,7 +138,7 @@ describe("React", () => {
       );
       const expected = normalizeQuotes(`
         ${importJSXRuntime}
-        import prerenderConfig from "prerender-macro";
+        ${importConfig}
         import {Bar} from "./components";
         
         export default function Test() {
@@ -168,7 +169,7 @@ describe("React", () => {
       );
       const expected = normalizeQuotes(`
         ${importJSXRuntime}
-        import prerenderConfig from "prerender-macro";
+        ${importConfig}
         import Foo from "./components";
         
         export default function Test() {
