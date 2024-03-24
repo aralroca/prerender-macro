@@ -64,7 +64,6 @@ In this way:
 
 <figure align="center">
   <img src="https://github.com/aralroca/prerender-macro/assets/13313058/8ab3cf1d-c395-494e-88aa-69ca207d7bdc" alt="React example" class="center" />
-  <figcaption><small>React example</small></figcaption>
 </figure>
 
 
