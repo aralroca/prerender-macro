@@ -42,7 +42,7 @@
 
 ## At glance
 
-`prerender-macro` plugin allows to make hybrid pages between dynamic and static components, avoiding the rendering in runtime of the static ones, this rendering is done in build-time thanks to Bun's macros.
+`prerender-macro` plugin allows [Partial Prerendering](https://aralroca.com/blog/partial-prerendering) (PPR) to make hybrid pages between dynamic and static components, avoiding the rendering in runtime of the static ones, this rendering is done in build-time thanks to Bun's macros.
 
 ```tsx
 import StaticComponent from "@/static-component" with { type: "prerender" };
