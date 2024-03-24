@@ -1,6 +1,6 @@
 import { render } from "preact-render-to-string";
 import { h } from "preact";
-import type { Config } from "prerender-macro";
+import type { PrerenderConfig } from "prerender-macro";
 
 export const prerenderConfig = {
   render: async (Component, props) => {
@@ -10,4 +10,4 @@ export const prerenderConfig = {
       />
     );
   },
-} satisfies Config;
+} satisfies PrerenderConfig;

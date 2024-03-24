@@ -159,14 +159,14 @@ The `prerenderConfig` named export needs this mandatory configuration to work:
 Configuration example:
 
 ```tsx
-import prerenderMacroPlugin, { type Config } from "prerender-macro";
+import prerenderMacroPlugin, { type PrerenderConfig } from "prerender-macro";
 import { dangerHTML } from "brisa";
 import { renderToString } from "brisa/server";
 
 export const prerenderConfig = {
   render: async (Component, props) =>
     dangerHTML(await renderToString(<Component {...props} />)),
-} satisfies Config;
+} satisfies PrerenderConfig;
 
 export const plugin = prerenderMacroPlugin({
   prerenderConfigPath: import.meta.url,
@@ -194,7 +194,7 @@ For React components, since React does not have a built-in function for injectin
 Configuration example:
 
 ```tsx
-import prerenderMacroPlugin, { type Config } from "prerender-macro";
+import prerenderMacroPlugin, { type PrerenderConfig } from "prerender-macro";
 import { renderToString } from "react-dom/server";
 
 export const prerenderConfig = {
@@ -204,7 +204,7 @@ export const prerenderConfig = {
   postRender: (htmlString) => (
     <div dangerouslySetInnerHTML={{ __html: htmlString }} />
   ),
-} satisfies Config;
+} satisfies PrerenderConfig;
 
 export const plugin = prerenderMacroPlugin({
   prerenderConfigPath: import.meta.url,
@@ -226,7 +226,7 @@ For Preact components, since Preact does not have a built-in function for inject
 Configuration example:
 
 ```tsx
-import prerenderMacroPlugin, { type Config } from "prerender-macro";
+import prerenderMacroPlugin, { type PrerenderConfig } from "prerender-macro";
 import { render } from "preact-render-to-string";
 import { h } from "preact";
 
@@ -238,7 +238,7 @@ export const prerenderConfig = {
       />
     );
   },
-} satisfies Config;
+} satisfies PrerenderConfig;
 
 export const plugin = prerenderMacroPlugin({
   prerenderConfigPath: import.meta.url,

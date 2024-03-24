@@ -27,7 +27,11 @@ describe("Brisa", () => {
       }
     `;
       const output = normalizeQuotes(
-        transpile({ code, path: currentFile, prerenderConfigPath: configPath }),
+        transpile({
+          code,
+          path: currentFile,
+          pluginConfig: { prerenderConfigPath: configPath },
+        }),
       );
       const expected = normalizeQuotes(code);
 
@@ -48,7 +52,11 @@ describe("Brisa", () => {
       }
     `;
       const output = normalizeQuotes(
-        transpile({ code, path: currentFile, prerenderConfigPath: configPath }),
+        transpile({
+          code,
+          path: currentFile,
+          pluginConfig: { prerenderConfigPath: configPath },
+        }),
       );
       const expected = normalizeQuotes(`
       ${importJSXRuntime}
@@ -81,7 +89,11 @@ describe("Brisa", () => {
       }
     `;
       const output = normalizeQuotes(
-        transpile({ code, path: currentFile, prerenderConfigPath: configPath }),
+        transpile({
+          code,
+          path: currentFile,
+          pluginConfig: { prerenderConfigPath: configPath },
+        }),
       );
       const expected = normalizeQuotes(`
         ${importJSXRuntime}
@@ -114,7 +126,11 @@ describe("Brisa", () => {
       }
     `;
       const output = normalizeQuotes(
-        transpile({ code, path: currentFile, prerenderConfigPath: configPath }),
+        transpile({
+          code,
+          path: currentFile,
+          pluginConfig: { prerenderConfigPath: configPath },
+        }),
       );
       const expected = normalizeQuotes(`
         ${importJSXRuntime}
@@ -141,7 +157,11 @@ describe("Brisa", () => {
         }
     `;
       const output = normalizeQuotes(
-        transpile({ code, path: currentFile, prerenderConfigPath: configPath }),
+        transpile({
+          code,
+          path: currentFile,
+          pluginConfig: { prerenderConfigPath: configPath },
+        }),
       );
       const expected = normalizeQuotes(`
         ${importJSXRuntime}
@@ -164,7 +184,11 @@ describe("Brisa", () => {
         }
     `;
       const output = normalizeQuotes(
-        transpile({ code, path: currentFile, prerenderConfigPath: configPath }),
+        transpile({
+          code,
+          path: currentFile,
+          pluginConfig: { prerenderConfigPath: configPath },
+        }),
       );
       const expected = normalizeQuotes(`
         ${importJSXRuntime}

@@ -23,7 +23,11 @@ describe("Preact", () => {
       }
     `;
       const output = format(
-        transpile({ code, path: currentFile, prerenderConfigPath: configPath }),
+        transpile({
+          code,
+          path: currentFile,
+          pluginConfig: { prerenderConfigPath: configPath },
+        }),
       );
       const expected = format(code);
 
@@ -44,7 +48,11 @@ describe("Preact", () => {
       }
     `;
       const output = format(
-        transpile({ code, path: currentFile, prerenderConfigPath: configPath }),
+        transpile({
+          code,
+          path: currentFile,
+          pluginConfig: { prerenderConfigPath: configPath },
+        }),
       );
       const expected = format(`
       import Foo from "./components";
@@ -77,7 +85,11 @@ describe("Preact", () => {
       }
     `;
       const output = format(
-        transpile({ code, path: currentFile, prerenderConfigPath: configPath }),
+        transpile({
+          code,
+          path: currentFile,
+          pluginConfig: { prerenderConfigPath: configPath },
+        }),
       );
       const expected = format(`
         import {Bar} from "./components";
@@ -111,7 +123,11 @@ describe("Preact", () => {
       }
     `;
       const output = format(
-        transpile({ code, path: currentFile, prerenderConfigPath: configPath }),
+        transpile({
+          code,
+          path: currentFile,
+          pluginConfig: { prerenderConfigPath: configPath },
+        }),
       );
       const expected = format(`
         import {Bar} from "./components";
@@ -139,7 +155,11 @@ describe("Preact", () => {
         }
     `;
       const output = format(
-        transpile({ code, path: currentFile, prerenderConfigPath: configPath }),
+        transpile({
+          code,
+          path: currentFile,
+          pluginConfig: { prerenderConfigPath: configPath },
+        }),
       );
       const expected = format(`
         import {Bar} from "./components";
@@ -161,7 +181,11 @@ describe("Preact", () => {
         }
     `;
       const output = format(
-        transpile({ code, path: currentFile, prerenderConfigPath: configPath }),
+        transpile({
+          code,
+          path: currentFile,
+          pluginConfig: { prerenderConfigPath: configPath },
+        }),
       );
       const expected = format(`
         import Foo from "./components";

@@ -1,7 +1,7 @@
 import { join } from "node:path";
 import { describe, it, expect } from "bun:test";
 import { transpile } from "prerender-macro";
-import { prerenderConfig as config } from "./config";
+import { prerenderConfig } from "./config";
 
 const toInline = (s: string) => s.replace(/\s*\n\s*/g, "");
 const normalizeQuotes = (s: string) => toInline(s).replaceAll("'", '"');
@@ -31,8 +31,8 @@ describe("React", () => {
         transpile({
           code,
           path: currentFile,
-          prerenderConfigPath: configPath,
-          config,
+          pluginConfig: { prerenderConfigPath: configPath },
+          prerenderConfig,
         }),
       );
       const expected = normalizeQuotes(code);
@@ -57,8 +57,8 @@ describe("React", () => {
         transpile({
           code,
           path: currentFile,
-          prerenderConfigPath: configPath,
-          config,
+          pluginConfig: { prerenderConfigPath: configPath },
+          prerenderConfig,
         }),
       );
       const expected = normalizeQuotes(`
@@ -97,8 +97,8 @@ describe("React", () => {
         transpile({
           code,
           path: currentFile,
-          prerenderConfigPath: configPath,
-          config,
+          pluginConfig: { prerenderConfigPath: configPath },
+          prerenderConfig,
         }),
       );
       const expected = normalizeQuotes(`
@@ -138,8 +138,8 @@ describe("React", () => {
         transpile({
           code,
           path: currentFile,
-          prerenderConfigPath: configPath,
-          config,
+          pluginConfig: { prerenderConfigPath: configPath },
+          prerenderConfig,
         }),
       );
       const expected = normalizeQuotes(`
@@ -173,8 +173,8 @@ describe("React", () => {
         transpile({
           code,
           path: currentFile,
-          prerenderConfigPath: configPath,
-          config,
+          pluginConfig: { prerenderConfigPath: configPath },
+          prerenderConfig,
         }),
       );
       const expected = normalizeQuotes(`
@@ -204,8 +204,8 @@ describe("React", () => {
         transpile({
           code,
           path: currentFile,
-          prerenderConfigPath: configPath,
-          config,
+          pluginConfig: { prerenderConfigPath: configPath },
+          prerenderConfig,
         }),
       );
       const expected = normalizeQuotes(`
