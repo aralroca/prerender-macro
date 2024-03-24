@@ -62,6 +62,12 @@ In this way:
 - The bundle is smaller because instead of carrying all the JS it only carries the prerendered HTML.
 - The runtime speed of rendering is faster, it only has to render the dynamic components.
 
+<figure align="center">
+  <img src="https://github.com/aralroca/prerender-macro/assets/13313058/8ab3cf1d-c395-494e-88aa-69ca207d7bdc" alt="React example" class="center" />
+  <figcaption><small>React example</small></figcaption>
+</figure>
+
+
 ### How it works?
 
 This plugin transforms the previous code to this code:
