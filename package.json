@@ -1,6 +1,6 @@
 {
   "name": "prerender-macro",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "module": "package/index.ts",
   "type": "module",
   "devDependencies": {
@@ -21,7 +21,8 @@
     "test:react": "cd tests/react && bun test && cd ../..",
     "test:preact": "cd tests/preact && bun test && cd ../..",
     "demo:react": "cd examples/react && bun start",
-    "demo:brisa": "cd examples/brisa && bun start"
+    "demo:brisa": "cd examples/brisa && bun start",
+    "demo:preact": "cd examples/preact && bun start"
   },
   "workspaces": [
     "package",

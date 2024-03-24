@@ -228,7 +228,6 @@ Configuration example:
 ```tsx
 import prerenderMacroPlugin, { type PrerenderConfig } from "prerender-macro";
 import { render } from "preact-render-to-string";
-import { h } from "preact";
 
 export const prerenderConfig = {
   render: async (Component, props) => {

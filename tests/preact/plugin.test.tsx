@@ -1,10 +1,16 @@
 import { join } from "node:path";
 import { describe, it, expect } from "bun:test";
-import { transpile } from "prerender-macro";
+import { TranspilerOptions, transpile } from "prerender-macro";
 
 const format = (s: string) => s.replace(/\s*\n\s*/g, "").replaceAll("'", '"');
 const configPath = join(import.meta.dir, "config.tsx");
 const currentFile = import.meta.url.replace("file://", "");
+const bunTranspiler = new Bun.Transpiler({ loader: "tsx" });
+
+function transpileAndRunMacros(config: TranspilerOptions) {
+  // Bun transpiler is needed here to run the macros
+  return format(bunTranspiler.transformSync(transpile(config)));
+}
 
 describe("Preact", () => {
   describe("plugin", () => {
@@ -22,14 +28,12 @@ describe("Preact", () => {
         );
       }
     `;
-      const output = format(
-        transpile({
-          code,
-          path: currentFile,
-          pluginConfig: { prerenderConfigPath: configPath },
-        }),
-      );
-      const expected = format(code);
+      const output = transpileAndRunMacros({
+        code,
+        path: currentFile,
+        pluginConfig: { prerenderConfigPath: configPath },
+      });
+      const expected = format(bunTranspiler.transformSync(code));
 
       expect(output).toBe(expected);
     });
@@ -47,13 +51,11 @@ describe("Preact", () => {
         );
       }
     `;
-      const output = format(
-        transpile({
-          code,
-          path: currentFile,
-          pluginConfig: { prerenderConfigPath: configPath },
-        }),
-      );
+      const output = transpileAndRunMacros({
+        code,
+        path: currentFile,
+        pluginConfig: { prerenderConfigPath: configPath },
+      });
       const expected = format(`
       import Foo from "./components";
       import {Bar} from "./components";
@@ -63,7 +65,7 @@ describe("Preact", () => {
           children: [{type: "div",props: {
             dangerouslySetInnerHTML: {__html: "<div>Foo, foo!</div>"
           }},
-          key: undefined,ref: undefined,__k: null,__: null,__b: 0,__e: null,__d: undefined,__c: null,constructor: undefined,__v: 4,__i: -1,__u: 0},jsxDEV(Bar, {}, undefined, false, undefined, this)]}, undefined, true, undefined, this);
+          key: undefined,ref: undefined,__k: null,__: null,__b: 0,__e: null,__d: undefined,__c: null,constructor: undefined,__v: -3,__i: -1,__u: 0,__source: undefined,__self: undefined},jsxDEV(Bar, {}, undefined, false, undefined, this)]}, undefined, true, undefined, this);
         }
     `);
 
@@ -84,13 +86,11 @@ describe("Preact", () => {
         );
       }
     `;
-      const output = format(
-        transpile({
-          code,
-          path: currentFile,
-          pluginConfig: { prerenderConfigPath: configPath },
-        }),
-      );
+      const output = transpileAndRunMacros({
+        code,
+        path: currentFile,
+        pluginConfig: { prerenderConfigPath: configPath },
+      });
       const expected = format(`
         import {Bar} from "./components";
         import Foo from "./components";
@@ -101,7 +101,7 @@ describe("Preact", () => {
               type: "div",props: {dangerouslySetInnerHTML: {
                 __html: "<div>Bar, bar!</div>"
               }
-            },key: undefined,ref: undefined,__k: null,__: null,__b: 0,__e: null,__d: undefined,__c: null,constructor: undefined,__v: 8,__i: -1,__u: 0}]}, undefined, true, undefined, this);
+            },key: undefined,ref: undefined,__k: null,__: null,__b: 0,__e: null,__d: undefined,__c: null,constructor: undefined,__v: -6,__i: -1,__u: 0,__source: undefined,__self: undefined}]}, undefined, true, undefined, this);
         }
     `);
 
@@ -122,13 +122,11 @@ describe("Preact", () => {
         );
       }
     `;
-      const output = format(
-        transpile({
-          code,
-          path: currentFile,
-          pluginConfig: { prerenderConfigPath: configPath },
-        }),
-      );
+      const output = transpileAndRunMacros({
+        code,
+        path: currentFile,
+        pluginConfig: { prerenderConfigPath: configPath },
+      });
       const expected = format(`
         import {Bar} from "./components";
         import Foo from "./components";
@@ -139,7 +137,7 @@ describe("Preact", () => {
               type: "div",props: {dangerouslySetInnerHTML: {
                 __html: "<div>Bar, bar!</div>"
               }
-            },key: undefined,ref: undefined,__k: null,__: null,__b: 0,__e: null,__d: undefined,__c: null,constructor: undefined,__v: 12,__i: -1,__u: 0}]}, undefined, true, undefined, this);
+            },key: undefined,ref: undefined,__k: null,__: null,__b: 0,__e: null,__d: undefined,__c: null,constructor: undefined,__v: -9,__i: -1,__u: 0,__source: undefined,__self: undefined}]}, undefined, true, undefined, this);
         }
     `);
 
@@ -154,18 +152,16 @@ describe("Preact", () => {
           return <Bar />;
         }
     `;
-      const output = format(
-        transpile({
-          code,
-          path: currentFile,
-          pluginConfig: { prerenderConfigPath: configPath },
-        }),
-      );
+      const output = transpileAndRunMacros({
+        code,
+        path: currentFile,
+        pluginConfig: { prerenderConfigPath: configPath },
+      });
       const expected = format(`
         import {Bar} from "./components";
         
         export default function Test() {
-          return {type: "div",props: {dangerouslySetInnerHTML: {__html: "<div>Bar, bar!</div>"}},key: undefined,ref: undefined,__k: null,__: null,__b: 0,__e: null,__d: undefined,__c: null,constructor: undefined,__v: 16,__i: -1,__u: 0};
+          return {type: "div",props: {dangerouslySetInnerHTML: {__html: "<div>Bar, bar!</div>"}},key: undefined,ref: undefined,__k: null,__: null,__b: 0,__e: null,__d: undefined,__c: null,constructor: undefined,__v: -12,__i: -1,__u: 0,__source: undefined,__self: undefined};
         }
       `);
 
@@ -180,18 +176,16 @@ describe("Preact", () => {
           return <Foo name="Preact" nested={{ foo: ' works' }} />;
         }
     `;
-      const output = format(
-        transpile({
-          code,
-          path: currentFile,
-          pluginConfig: { prerenderConfigPath: configPath },
-        }),
-      );
+      const output = transpileAndRunMacros({
+        code,
+        path: currentFile,
+        pluginConfig: { prerenderConfigPath: configPath },
+      });
       const expected = format(`
         import Foo from "./components";
         
         export default function Test() {
-          return {type: "div",props: {dangerouslySetInnerHTML: {__html: "<div>Foo, Preact works!</div>"}},key: undefined,ref: undefined,__k: null,__: null,__b: 0,__e: null,__d: undefined,__c: null,constructor: undefined,__v: 20,__i: -1,__u: 0};
+          return {type: "div",props: {dangerouslySetInnerHTML: {__html: "<div>Foo, Preact works!</div>"}},key: undefined,ref: undefined,__k: null,__: null,__b: 0,__e: null,__d: undefined,__c: null,constructor: undefined,__v: -15,__i: -1,__u: 0,__source: undefined,__self: undefined};
         }
       `);
 

@@ -1,13 +1,9 @@
-import type { BunPlugin, TranspilerOptions } from "bun";
+import type { BunPlugin } from "bun";
 import { dirname } from "node:path";
 import ts from "typescript";
 
-let transpiler = new Bun.Transpiler({ loader: "tsx" });
-const JSX_RUNTIME = ["jsx-runtime", "jsx-dev-runtime"];
-
 export type PluginConfig = {
   prerenderConfigPath: string;
-  tsconfig?: TranspilerOptions["tsconfig"];
 };
 
 export type PrerenderConfig = {
@@ -16,6 +12,13 @@ export type PrerenderConfig = {
     props: any,
   ) => JSX.Element | string | Promise<JSX.Element | string>;
   postRender?: (htmlString: string) => JSX.Element;
+};
+
+export type TranspilerOptions = {
+  code: string;
+  path: string;
+  pluginConfig: PluginConfig;
+  prerenderConfig?: PrerenderConfig;
 };
 
 export default function plugin(pluginConfig: PluginConfig) {
@@ -53,12 +56,7 @@ export function transpile({
   path,
   pluginConfig,
   prerenderConfig,
-}: {
-  code: string;
-  path: string;
-  pluginConfig: PluginConfig;
-  prerenderConfig?: PrerenderConfig;
-}) {
+}: TranspilerOptions) {
   const sourceFile = createSourceFile(code);
   const importsWithPrerender = getImportsWithPrerender(sourceFile, path);
 
@@ -73,11 +71,9 @@ export function transpile({
     prerenderConfig,
   ) as ts.SourceFile;
 
-  const modifiedCode = ts
+  return ts
     .createPrinter()
     .printNode(ts.EmitHint.Unspecified, modifiedAst, sourceFile);
-
-  return runMacros(modifiedCode);
 }
 
 function createSourceFile(code: string) {
@@ -299,30 +295,6 @@ function replaceJSXToMacroCall(
       ),
     context,
   );
-}
-
-function runMacros(code: string) {
-  // This is totally necessary to execute the Bun macros
-  let codeAfterMacros = transpiler.transformSync(code);
-
-  // WORKAROUND: Find the JSX runtime to add the import
-  // Issue: https://github.com/oven-sh/bun/issues/7499
-  if (!globalThis.jsxRuntime) {
-    for (let key of globalThis.Loader.registry.keys()) {
-      if (JSX_RUNTIME.some((k) => key.includes(k))) {
-        globalThis.jsxRuntime = key;
-        break;
-      }
-    }
-  }
-
-  // WORKAROUND: Add the JSX runtime import
-  // Issue: https://github.com/oven-sh/bun/issues/7499
-  if (globalThis.jsxRuntime) {
-    codeAfterMacros = `import {jsx, jsxDEV, jsxs, Fragment} from "${globalThis.jsxRuntime}";\n${codeAfterMacros}`;
-  }
-
-  return codeAfterMacros;
 }
 
 declare global {

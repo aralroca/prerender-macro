@@ -1,0 +1,19 @@
+{
+  "name": "preact-example",
+  "private": true,
+  "module": "build.tsx",
+  "type": "module",
+  "scripts": {
+    "start": "bun run src/build.ts && bun run dist/index.js"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "5.4.3"
+  },
+  "dependencies": {
+    "prerender-macro": "workspace:*",
+    "preact-render-to-string": "6.4.1"
+  }
+}

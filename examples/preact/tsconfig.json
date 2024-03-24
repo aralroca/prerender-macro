@@ -18,5 +18,5 @@
   "resolve": {
     "extensions": [".js", ".jsx", ".ts", ".tsx", ".json", ".svg", ".css"]
   },
-  "include": ["."]
+  "include": ["src"]
 }

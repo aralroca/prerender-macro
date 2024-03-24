@@ -1,14 +1,16 @@
 import { join } from "node:path";
 import { describe, it, expect } from "bun:test";
-import { transpile } from "prerender-macro";
+import { transpile, type TranspilerOptions } from "prerender-macro";
 
-const toInline = (s: string) => s.replace(/\s*\n\s*/g, "");
-const normalizeQuotes = (s: string) => toInline(s).replaceAll("'", '"');
+const format = (s: string) => s.replace(/\s*\n\s*/g, "").replaceAll("'", '"');
 const configPath = join(import.meta.dir, "config.tsx");
 const currentFile = import.meta.url.replace("file://", "");
+const bunTranspiler = new Bun.Transpiler({ loader: "tsx" });
 
-const jsxRuntimePath = import.meta.resolveSync("brisa/jsx-dev-runtime");
-const importJSXRuntime = `import {jsx, jsxDEV, jsxs, Fragment} from "${jsxRuntimePath}";`;
+function transpileAndRunMacros(config: TranspilerOptions) {
+  // Bun transpiler is needed here to run the macros
+  return format(bunTranspiler.transformSync(transpile(config)));
+}
 
 describe("Brisa", () => {
   describe("plugin", () => {
@@ -26,14 +28,12 @@ describe("Brisa", () => {
         );
       }
     `;
-      const output = normalizeQuotes(
-        transpile({
-          code,
-          path: currentFile,
-          pluginConfig: { prerenderConfigPath: configPath },
-        }),
-      );
-      const expected = normalizeQuotes(code);
+      const output = transpileAndRunMacros({
+        code,
+        path: currentFile,
+        pluginConfig: { prerenderConfigPath: configPath },
+      });
+      const expected = format(bunTranspiler.transformSync(code));
 
       expect(output).toBe(expected);
     });
@@ -51,15 +51,12 @@ describe("Brisa", () => {
         );
       }
     `;
-      const output = normalizeQuotes(
-        transpile({
-          code,
-          path: currentFile,
-          pluginConfig: { prerenderConfigPath: configPath },
-        }),
-      );
-      const expected = normalizeQuotes(`
-      ${importJSXRuntime}
+      const output = transpileAndRunMacros({
+        code,
+        path: currentFile,
+        pluginConfig: { prerenderConfigPath: configPath },
+      });
+      const expected = format(`
       import Foo from "./components";
       import {Bar} from "./components";
       
@@ -88,15 +85,12 @@ describe("Brisa", () => {
         );
       }
     `;
-      const output = normalizeQuotes(
-        transpile({
-          code,
-          path: currentFile,
-          pluginConfig: { prerenderConfigPath: configPath },
-        }),
-      );
-      const expected = normalizeQuotes(`
-        ${importJSXRuntime}
+      const output = transpileAndRunMacros({
+        code,
+        path: currentFile,
+        pluginConfig: { prerenderConfigPath: configPath },
+      });
+      const expected = format(`
         import {Bar} from "./components";
         import Foo from "./components";
         
@@ -125,15 +119,12 @@ describe("Brisa", () => {
         );
       }
     `;
-      const output = normalizeQuotes(
-        transpile({
-          code,
-          path: currentFile,
-          pluginConfig: { prerenderConfigPath: configPath },
-        }),
-      );
-      const expected = normalizeQuotes(`
-        ${importJSXRuntime}
+      const output = transpileAndRunMacros({
+        code,
+        path: currentFile,
+        pluginConfig: { prerenderConfigPath: configPath },
+      });
+      const expected = format(`
         import {Bar} from "./components";
         import Foo from "./components";
         
@@ -156,15 +147,12 @@ describe("Brisa", () => {
           return <Bar />;
         }
     `;
-      const output = normalizeQuotes(
-        transpile({
-          code,
-          path: currentFile,
-          pluginConfig: { prerenderConfigPath: configPath },
-        }),
-      );
-      const expected = normalizeQuotes(`
-        ${importJSXRuntime}
+      const output = transpileAndRunMacros({
+        code,
+        path: currentFile,
+        pluginConfig: { prerenderConfigPath: configPath },
+      });
+      const expected = format(`
         import {Bar} from "./components";
         
         export default function Test() {
@@ -183,15 +171,12 @@ describe("Brisa", () => {
           return <Foo name="Brisa" nested={{ foo: ' works' }} />;
         }
     `;
-      const output = normalizeQuotes(
-        transpile({
-          code,
-          path: currentFile,
-          pluginConfig: { prerenderConfigPath: configPath },
-        }),
-      );
-      const expected = normalizeQuotes(`
-        ${importJSXRuntime}
+      const output = transpileAndRunMacros({
+        code,
+        path: currentFile,
+        pluginConfig: { prerenderConfigPath: configPath },
+      });
+      const expected = format(`
         import Foo from "./components";
         
         export default function Test() {
