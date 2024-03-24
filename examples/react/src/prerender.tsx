@@ -1,4 +1,4 @@
-import { type Config } from "prerender-macro";
+import { type PrerenderConfig } from "prerender-macro";
 import { renderToString } from "react-dom/server";
 
 export const prerenderConfig = {
@@ -8,4 +8,4 @@ export const prerenderConfig = {
   postRender: (htmlString) => {
     return <div dangerouslySetInnerHTML={{ __html: htmlString }} />;
   },
-} satisfies Config;
+} satisfies PrerenderConfig;

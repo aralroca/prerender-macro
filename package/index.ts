@@ -1,14 +1,16 @@
-import type { BunPlugin } from "bun";
+import type { BunPlugin, TranspilerOptions } from "bun";
 import { dirname } from "node:path";
 import ts from "typescript";
-import { prerender } from "./prerender";
 
-const transpiler = new Bun.Transpiler({ loader: "tsx" });
+let transpiler = new Bun.Transpiler({ loader: "tsx" });
 const JSX_RUNTIME = ["jsx-runtime", "jsx-dev-runtime"];
 
-type PrerenderPluginParams = { prerenderConfigPath: string };
+export type PluginConfig = {
+  prerenderConfigPath: string;
+  tsconfig?: TranspilerOptions["tsconfig"];
+};
 
-export type Config = {
+export type PrerenderConfig = {
   render: (
     Component: any,
     props: any,
@@ -16,20 +18,24 @@ export type Config = {
   postRender?: (htmlString: string) => JSX.Element;
 };
 
-export default function plugin({ prerenderConfigPath }: PrerenderPluginParams) {
+export default function plugin(pluginConfig: PluginConfig) {
+  if (!pluginConfig?.prerenderConfigPath) {
+    throw new Error("prerender-macro: prerenderConfigPath config is required");
+  }
   return {
     name: "prerender-plugin",
     async setup(build) {
       build.onLoad({ filter: /\.(tsx|jsx)$/ }, async ({ path, loader }) => {
         const code = await Bun.file(path).text();
-        const config = (await import(prerenderConfigPath))?.prerenderConfig;
+        const prerenderConfig = (await import(pluginConfig.prerenderConfigPath))
+          ?.prerenderConfig;
 
         try {
           const contents = transpile({
             code,
             path,
-            prerenderConfigPath,
-            config,
+            pluginConfig,
+            prerenderConfig,
           });
 
           return { contents, loader };
@@ -45,26 +51,26 @@ export default function plugin({ prerenderConfigPath }: PrerenderPluginParams) {
 export function transpile({
   code,
   path,
-  prerenderConfigPath,
-  config,
+  pluginConfig,
+  prerenderConfig,
 }: {
   code: string;
   path: string;
-  prerenderConfigPath: string;
-  config?: Config;
+  pluginConfig: PluginConfig;
+  prerenderConfig?: PrerenderConfig;
 }) {
   const sourceFile = createSourceFile(code);
   const importsWithPrerender = getImportsWithPrerender(sourceFile, path);
 
   if (!importsWithPrerender.length) return code;
 
-  let modifiedAst = addExtraImports(sourceFile, prerenderConfigPath, config);
+  let modifiedAst = addExtraImports(sourceFile, pluginConfig, prerenderConfig);
 
   modifiedAst = replaceJSXToMacroCall(
     modifiedAst,
     importsWithPrerender,
-    prerenderConfigPath,
-    config,
+    pluginConfig,
+    prerenderConfig,
   ) as ts.SourceFile;
 
   const modifiedCode = ts
@@ -135,8 +141,8 @@ function isPrerenderImport(node: ts.Node): node is ts.ImportDeclaration {
 
 function addExtraImports(
   ast: ts.SourceFile,
-  prerenderConfigPath: string,
-  config?: Config,
+  pluginConfig: PluginConfig,
+  prerenderConfig?: PrerenderConfig,
 ) {
   const allImports = [...ast.statements];
 
@@ -166,7 +172,7 @@ function addExtraImports(
     ),
   );
 
-  if (config?.postRender) {
+  if (prerenderConfig?.postRender) {
     allImports.unshift(
       ts.factory.createImportDeclaration(
         undefined,
@@ -181,7 +187,7 @@ function addExtraImports(
             ),
           ]),
         ),
-        ts.factory.createStringLiteral(prerenderConfigPath),
+        ts.factory.createStringLiteral(pluginConfig.prerenderConfigPath),
       ),
     );
   }
@@ -205,8 +211,8 @@ function addExtraImports(
 function replaceJSXToMacroCall(
   node: ts.Node,
   imports: any[],
-  prerenderConfigPath: string,
-  config?: Config,
+  pluginConfig: PluginConfig,
+  prerenderConfig?: PrerenderConfig,
   context?: ts.TransformationContext,
 ): ts.Node {
   if (ts.isJsxSelfClosingElement(node) || ts.isJsxOpeningElement(node)) {
@@ -252,14 +258,14 @@ function replaceJSXToMacroCall(
             ),
             ts.factory.createPropertyAssignment(
               ts.factory.createIdentifier("prerenderConfigPath"),
-              ts.factory.createStringLiteral(prerenderConfigPath),
+              ts.factory.createStringLiteral(pluginConfig.prerenderConfigPath),
             ),
           ]),
         ],
       );
 
       // Wrap with postRender function
-      if (config?.postRender) {
+      if (prerenderConfig?.postRender) {
         macroCall = ts.factory.createCallExpression(
           ts.factory.createPropertyAccessExpression(
             ts.factory.createIdentifier("prerenderConfig"),
@@ -287,8 +293,8 @@ function replaceJSXToMacroCall(
       replaceJSXToMacroCall(
         child,
         imports,
-        prerenderConfigPath,
-        config,
+        pluginConfig,
+        prerenderConfig,
         context,
       ),
     context,
