@@ -12,7 +12,6 @@
 
 [![npm version](https://badge.fury.io/js/prerender-macro.svg)](https://badge.fury.io/js/prerender-macro)
 ![npm](https://img.shields.io/npm/dw/prerender-macro)
-[![size](https://img.shields.io/bundlephobia/minzip/prerender-macro)](https://bundlephobia.com/package/prerender-macro)
 [![PRs Welcome][badge-prwelcome]][prwelcome]
 <a href="https://github.com/aralroca/prerender-macro/actions?query=workflow%3ATest" alt="Tests status">
 <img src="https://github.com/aralroca/prerender-macro/workflows/Test/badge.svg" /></a>
@@ -144,11 +143,11 @@ The `prerenderConfig` named export needs this mandatory configuration to work:
 
 ## Configuration examples in different frameworks
 
-| Framework                                        | Render ahead of time | Inject ahead of time | Preserves the HTML structure | Demo                    |
-| ------------------------------------------------ | -------------------- | -------------------- | ---------------------------- | ----------------------- |
-| <h3><a href="#brisa-experimental">Brisa</a></h3> | ✅                   | ✅                   | ✅                           | [🔗](/examples/brisa/)  |
-| <h3><a href="#react">React</a></h3>              | ✅                   | ❌                   | ❌                           | [🔗](/examples/react/)  |
-| <h3><a href="#preact">Preact</a></h3>            | ✅                   | ✅                   | ❌                           | [🔗](/examples/preact/) |
+| Framework                                                                   | Render ahead of time | Inject ahead of time | Preserves the HTML structure | Demo                    |
+| --------------------------------------------------------------------------- | -------------------- | -------------------- | ---------------------------- | ----------------------- |
+| <div style="font-size: 16px;"><a href="#brisa-experimental">Brisa</a></div> | ✅                   | ✅                   | ✅                           | [🔗](/examples/brisa/)  |
+| <div style="font-size: 16px;"><a href="#react">React</a></div>              | ✅                   | ❌                   | ❌                           | [🔗](/examples/react/)  |
+| <div style="font-size: 16px;"><a href="#preact">Preact</a></div>            | ✅                   | ✅                   | ❌                           | [🔗](/examples/preact/) |
 
 > [!TIP]
 >
