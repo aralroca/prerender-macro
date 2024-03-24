@@ -8,7 +8,7 @@ const configPath = join(import.meta.dir, "config.tsx");
 const currentFile = import.meta.url.replace("file://", "");
 
 const jsxRuntimePath = import.meta.resolveSync("brisa/jsx-dev-runtime");
-const importJSXRuntime = `import {jsx, jsxDEV, Fragment} from "${jsxRuntimePath}";`;
+const importJSXRuntime = `import {jsx, jsxDEV, jsxs, Fragment} from "${jsxRuntimePath}";`;
 
 describe("Brisa", () => {
   describe("plugin", () => {
