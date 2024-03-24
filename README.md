@@ -144,11 +144,11 @@ The `prerenderConfig` named export needs this mandatory configuration to work:
 
 ## Configuration examples in different frameworks
 
-| Framework                    | Render ahead of time | Inject ahead of time | Preserves the HTML structure |
-| ---------------------------- | -------------------- | -------------------- | ---------------------------- |
-| [Brisa](#brisa-experimental) | ✅                   | ✅                   | ✅                           |
-| [React](#react)              | ✅                   | ❌                   | ❌                           |
-| [Preact](#preact)            | ✅                   | ✅                   | ❌                           |
+| Framework                                        | Render ahead of time | Inject ahead of time | Preserves the HTML structure | Demo                    |
+| ------------------------------------------------ | -------------------- | -------------------- | ---------------------------- | ----------------------- |
+| <h3><a href="#brisa-experimental">Brisa</a></h3> | ✅                   | ✅                   | ✅                           | [🔗](/examples/brisa/)  |
+| <h3><a href="#react">React</a></h3>              | ✅                   | ❌                   | ❌                           | [🔗](/examples/react/)  |
+| <h3><a href="#preact">Preact</a></h3>            | ✅                   | ✅                   | ❌                           | [🔗](/examples/preact/) |
 
 > [!TIP]
 >

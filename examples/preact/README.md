@@ -1,13 +1,14 @@
 # `prerender-macro` Preact Example
 
-This is an example with React SSR without hotreloading and with a build process.
+This is an example with Preact SSR without hotreloading and with a build process.
 
 To test it:
 
-- `bun install`
-- `bun run start`
+- Clone the repo: `git clone git@github.com:aralroca/prerender-macro.git`
+- Install dependencies: `cd prerender-macro && bun install`
+- Run demo: `bun run demo:preact`
 - Open http://localhost:1234 to see the result
-- Look at `dist/index.js` to verify how the static parts have been converted to HTML in string.
+- Look at `examples/preact/dist/index.js` to verify how the static parts have been converted to HTML in string.
 
 The static component is translated to html in string in build-time:
 
