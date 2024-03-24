@@ -1,5 +1,5 @@
 {
-  "name": "react-example",
+  "name": "brisa-example",
   "private": true,
   "module": "build.tsx",
   "type": "module",
@@ -13,10 +13,7 @@
     "typescript": "5.4.3"
   },
   "dependencies": {
-    "@types/react": "18.2.69",
-    "@types/react-dom": "18.2.22",
     "prerender-macro": "workspace:*",
-    "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "brisa": "latest"
   }
 }

@@ -1,15 +1,15 @@
 import DynamicComponent from "./components/dynamic-component";
 import StaticComponent from "./components/static-component" with { type: "prerender" };
-import { renderToString } from "react-dom/server";
+import { renderToString } from "brisa/server";
 
 Bun.serve({
   port: 1234,
   fetch: async () => {
     return new Response(
-      renderToString(
+      await renderToString(
         <html>
           <head>
-            <title>Prerender Macro | React example</title>
+            <title>Prerender Macro | Brisa example</title>
             <meta charSet="utf-8" />
           </head>
           <body>
