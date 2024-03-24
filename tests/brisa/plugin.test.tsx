@@ -8,7 +8,7 @@ const configPath = join(import.meta.dir, "config.tsx");
 const currentFile = import.meta.url.replace("file://", "");
 
 const jsxRuntimePath = import.meta.resolveSync("brisa/jsx-dev-runtime");
-const importJSXRuntime = `import {jsx, jsxDEV} from "${jsxRuntimePath}";`;
+const importJSXRuntime = `import {jsx, jsxDEV, Fragment} from "${jsxRuntimePath}";`;
 
 describe("Brisa", () => {
   describe("plugin", () => {
@@ -90,6 +90,39 @@ describe("Brisa", () => {
         
         export default function Test() {
           return jsxDEV("div", {
+            children: [jsxDEV(Foo, {}, undefined, false, undefined, this),
+              {type: "HTML",props: {html: "<div>Bar, bar!</div>"}}
+            ]}, undefined, true, undefined, this)
+          ;}
+    `);
+
+      expect(output).toBe(expected);
+    });
+
+    it("should transform a static component from named export and a fragment", () => {
+      const code = `
+      import { Bar } from "./components" with { type: "prerender" };
+      import Foo from "./components";
+
+      export default function Test() {
+        return (
+          <>
+            <Foo />
+            <Bar />
+          </>
+        );
+      }
+    `;
+      const output = normalizeQuotes(
+        transpile({ code, path: currentFile, prerenderConfigPath: configPath }),
+      );
+      const expected = normalizeQuotes(`
+        ${importJSXRuntime}
+        import {Bar} from "./components";
+        import Foo from "./components";
+        
+        export default function Test() {
+          return jsxDEV(Fragment, {
             children: [jsxDEV(Foo, {}, undefined, false, undefined, this),
               {type: "HTML",props: {html: "<div>Bar, bar!</div>"}}
             ]}, undefined, true, undefined, this)

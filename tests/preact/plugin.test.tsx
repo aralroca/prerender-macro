@@ -96,6 +96,40 @@ describe("Preact", () => {
       expect(output).toBe(expected);
     });
 
+    it("should transform a static component from named export and a fragment", () => {
+      const code = `
+      import { Bar } from "./components" with { type: "prerender" };
+      import Foo from "./components";
+
+      export default function Test() {
+        return (
+          <>
+            <Foo />
+            <Bar />
+          </>
+        );
+      }
+    `;
+      const output = format(
+        transpile({ code, path: currentFile, prerenderConfigPath: configPath }),
+      );
+      const expected = format(`
+        import {Bar} from "./components";
+        import Foo from "./components";
+        
+        export default function Test() {
+          return jsxDEV(Fragment, {
+            children: [jsxDEV(Foo, {}, undefined, false, undefined, this),{
+              type: "div",props: {dangerouslySetInnerHTML: {
+                __html: "<div>Bar, bar!</div>"
+              }
+            },key: undefined,ref: undefined,__k: null,__: null,__b: 0,__e: null,__d: undefined,__c: null,constructor: undefined,__v: 12,__i: -1,__u: 0}]}, undefined, true, undefined, this);
+        }
+    `);
+
+      expect(output).toBe(expected);
+    });
+
     it("should transform a static component when is not inside JSX", () => {
       const code = `
         import { Bar } from "./components" with { type: "prerender" };
@@ -111,7 +145,7 @@ describe("Preact", () => {
         import {Bar} from "./components";
         
         export default function Test() {
-          return {type: "div",props: {dangerouslySetInnerHTML: {__html: "<div>Bar, bar!</div>"}},key: undefined,ref: undefined,__k: null,__: null,__b: 0,__e: null,__d: undefined,__c: null,constructor: undefined,__v: 12,__i: -1,__u: 0};
+          return {type: "div",props: {dangerouslySetInnerHTML: {__html: "<div>Bar, bar!</div>"}},key: undefined,ref: undefined,__k: null,__: null,__b: 0,__e: null,__d: undefined,__c: null,constructor: undefined,__v: 16,__i: -1,__u: 0};
         }
       `);
 
@@ -133,7 +167,7 @@ describe("Preact", () => {
         import Foo from "./components";
         
         export default function Test() {
-          return {type: "div",props: {dangerouslySetInnerHTML: {__html: "<div>Foo, Preact works!</div>"}},key: undefined,ref: undefined,__k: null,__: null,__b: 0,__e: null,__d: undefined,__c: null,constructor: undefined,__v: 16,__i: -1,__u: 0};
+          return {type: "div",props: {dangerouslySetInnerHTML: {__html: "<div>Foo, Preact works!</div>"}},key: undefined,ref: undefined,__k: null,__: null,__b: 0,__e: null,__d: undefined,__c: null,constructor: undefined,__v: 20,__i: -1,__u: 0};
         }
       `);
 

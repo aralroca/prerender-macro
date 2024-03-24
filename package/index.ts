@@ -270,7 +270,10 @@ function replaceJSXToMacroCall(
         );
       }
 
-      if (node.parent && ts.isJsxElement(node.parent)) {
+      if (
+        node.parent &&
+        (ts.isJsxElement(node.parent) || ts.isJsxFragment(node.parent))
+      ) {
         return ts.factory.createJsxExpression(undefined, macroCall);
       }
 
@@ -310,7 +313,7 @@ function runMacros(code: string) {
   // WORKAROUND: Add the JSX runtime import
   // Issue: https://github.com/oven-sh/bun/issues/7499
   if (globalThis.jsxRuntime) {
-    codeAfterMacros = `import {jsx, jsxDEV} from "${globalThis.jsxRuntime}";\n${codeAfterMacros}`;
+    codeAfterMacros = `import {jsx, jsxDEV, Fragment} from "${globalThis.jsxRuntime}";\n${codeAfterMacros}`;
   }
 
   return codeAfterMacros;
