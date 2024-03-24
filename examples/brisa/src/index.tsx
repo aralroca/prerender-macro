@@ -1,12 +1,12 @@
 import DynamicComponent from "./components/dynamic-component";
 import StaticComponent from "./components/static-component" with { type: "prerender" };
-import { renderToString } from "brisa/server";
+import { renderToReadableStream } from "brisa/server";
 
 Bun.serve({
   port: 1234,
-  fetch: async () => {
+  fetch: async (request: Request) => {
     return new Response(
-      await renderToString(
+      renderToReadableStream(
         <html>
           <head>
             <title>Prerender Macro | Brisa example</title>
@@ -18,6 +18,7 @@ Bun.serve({
             <a href="/">Refresh</a>
           </body>
         </html>,
+        { request },
       ),
       { headers: new Headers({ "Content-Type": "text/html" }) },
     );

@@ -1,12 +1,12 @@
 import DynamicComponent from "./components/dynamic-component";
 import StaticComponent from "./components/static-component" with { type: "prerender" };
-import { renderToString } from "react-dom/server";
+import { renderToReadableStream } from "react-dom/server";
 
 Bun.serve({
   port: 1234,
   fetch: async () => {
     return new Response(
-      renderToString(
+      await renderToReadableStream(
         <html>
           <head>
             <title>Prerender Macro | React example</title>
