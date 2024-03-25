@@ -26,8 +26,8 @@
 
 <p align="center">Work in every JSX Framework.</p>
 
-- [At glance](#at-a-glance)
-  - [How it works?](#how-does-it-work)
+- [At a glance](#at-a-glance)
+  - [How does it work?](#how-does-it-work)
 - [Quick Start](#quick-start)
   - [Install](#install)
   - [Use it in `Bun.build`](#use-it-in-bunbuild)
@@ -40,7 +40,7 @@
 - [Contributing](#contributing)
 - [License](#license)
 
-## At a Glance
+## At a glance
 
 `prerender-macro` plugin allows [Partial Prerendering](https://aralroca.com/blog/partial-prerendering) (PPR) to make hybrid pages between dynamic and static components, avoiding the rendering in runtime of the static ones, this rendering is done in build-time thanks to Bun's macros.
 
