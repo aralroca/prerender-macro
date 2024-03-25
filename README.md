@@ -26,9 +26,9 @@
 
 <p align="center">Work in every JSX Framework.</p>
 
-- [At glance](#at-glance)
-  - [How it works?](#how-it-works)
-- [Quick start](#quick-start)
+- [At glance](#at-a-glance)
+  - [How it works?](#how-does-it-work)
+- [Quick Start](#quick-start)
   - [Install](#install)
   - [Use it in `Bun.build`](#use-it-in-bunbuild)
 - [Configuration](#configuration)
@@ -40,7 +40,7 @@
 - [Contributing](#contributing)
 - [License](#license)
 
-## At glance
+## At a Glance
 
 `prerender-macro` plugin allows [Partial Prerendering](https://aralroca.com/blog/partial-prerendering) (PPR) to make hybrid pages between dynamic and static components, avoiding the rendering in runtime of the static ones, this rendering is done in build-time thanks to Bun's macros.
 
@@ -67,9 +67,9 @@ In this way:
 </figure>
 
 
-### How it works?
+### How does it work?
 
-This plugin transforms the previous code to this code:
+This plugin transforms the previous code into this code:
 
 ```tsx
 import { prerender } from "prerender-macro/prerender" with { "type": "macro" };
@@ -92,7 +92,7 @@ And pass it back through the [Bun transpiler](https://bun.sh/docs/api/transpiler
 
 > [!IMPORTANT]
 >
-> Macros can accept **component properties**, but only in limited cases. The value must be **statically known**. For more info take a look the [Bun Macros Arguments](https://bun.sh/docs/bundler/macros#arguments) documentation.
+> Macros can accept **component properties**, but only in limited cases. The value must be **statically known**. For more info take a look at the [Bun Macros Arguments](https://bun.sh/docs/bundler/macros#arguments) documentation.
 
 ## Quick start
 
@@ -131,7 +131,7 @@ The `prerender-macro` plugin needs this mandatory configuration to work:
 | --------------------- | --------------------------------------------------------------- | --------- |
 | `prerenderConfigPath` | String path of the file with the `prerenderConfig` named export | `true`    |
 
-The configuration can be in another file, but it is mandatory that it has the named export `prerenderConfig`.
+The configuration can be in another file, but it must have the named export `prerenderConfig`.
 
 It is necessary to do it this way because this configuration will be executed when doing the prerender inside a Bun macro, and at this point we cannot pass it from the plugin because it would need to be serialized, so it is better that you directly access it.
 
