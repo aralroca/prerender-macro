@@ -11,8 +11,8 @@
     "@types/react-dom": "18.2.22",
     "brisa": "0.0.38",
     "preact": "10.20.1",
-    "@kitajs/html": "4.0.0-next.2",
-    "@kitajs/ts-html-plugin": "4.0.0-next.2"
+    "@kitajs/html": "4.0.0-next.3",
+    "@kitajs/ts-html-plugin": "4.0.0-next.3"
   },
   "dependencies": {
     "typescript": "5.4.3"
