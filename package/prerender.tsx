@@ -11,9 +11,13 @@ export async function prerender({
   componentProps = {},
   prerenderConfigPath,
 }: PrerenderParams) {
-  const Component = (await import(componentPath))[componentModuleName];
-  const config = (await import(prerenderConfigPath)).prerenderConfig;
-  return await config.render(Component, componentProps);
+  try {
+    const Component = (await import(componentPath))[componentModuleName];
+    const config = (await import(prerenderConfigPath)).prerenderConfig;
+    return await config.render(Component, componentProps);
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 export const __prerender__macro = prerender;
