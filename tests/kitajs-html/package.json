@@ -1,0 +1,10 @@
+{
+  "name": "test-kitajs-html",
+  "private": true,
+  "scripts": {
+    "test": "bun test"
+  },
+  "dependencies": {
+    "prerender-macro": "workspace:*"
+  }
+}

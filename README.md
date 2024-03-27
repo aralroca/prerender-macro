@@ -36,6 +36,7 @@
   - [Brisa](#brisa-experimental)
   - [React](#react)
   - [Preact](#preact)
+  - [Kitajs/html](#kitajshtml)
   - [Add your framework example](#add-your-framework-example)
 - [Contributing](#contributing)
 - [License](#license)
@@ -65,7 +66,6 @@ In this way:
 <figure align="center">
   <img src="https://github.com/aralroca/prerender-macro/assets/13313058/8ab3cf1d-c395-494e-88aa-69ca207d7bdc" alt="React example" class="center" />
 </figure>
-
 
 ### How it works?
 
@@ -148,11 +148,12 @@ The `prerenderConfig` named export needs this mandatory configuration to work:
 
 ## Configuration examples in different frameworks
 
-| Framework                                                                   | Render ahead of time | Inject ahead of time | Preserves the HTML structure | Demo                    |
-| --------------------------------------------------------------------------- | -------------------- | -------------------- | ---------------------------- | ----------------------- |
-| <div style="font-size: 16px;"><a href="#brisa-experimental">Brisa</a></div> | ✅                   | ✅                   | ✅                           | [🔗](/examples/brisa/)  |
-| <div style="font-size: 16px;"><a href="#react">React</a></div>              | ✅                   | ❌                   | ❌                           | [🔗](/examples/react/)  |
-| <div style="font-size: 16px;"><a href="#preact">Preact</a></div>            | ✅                   | ✅                   | ❌                           | [🔗](/examples/preact/) |
+| Framework                                                                   | Render ahead of time | Inject ahead of time | Preserves the HTML structure | Demo                         |
+| --------------------------------------------------------------------------- | -------------------- | -------------------- | ---------------------------- | ---------------------------- |
+| <div style="font-size: 16px;"><a href="#brisa-experimental">Brisa</a></div> | ✅                   | ✅                   | ✅                           | [🔗](/examples/brisa/)       |
+| <div style="font-size: 16px;"><a href="#react">React</a></div>              | ✅                   | ❌                   | ❌                           | [🔗](/examples/react/)       |
+| <div style="font-size: 16px;"><a href="#preact">Preact</a></div>            | ✅                   | ✅                   | ❌                           | [🔗](/examples/preact/)      |
+| <div style="font-size: 16px;"><a href="#kitajshtml">Kitajs/html</a></div>   | ✅                   | ✅                   | ✅                           | [🔗](/examples/kitajs-html/) |
 
 > [!TIP]
 >
@@ -255,6 +256,31 @@ export const plugin = prerenderMacroPlugin({
 > [!CAUTION]
 >
 > **Additional `<div>` Nodes**: Using `dangerouslySetInnerHTML` attribute to inject HTML strings into JSX components results in the creation of an additional `<div>` node for each injection, which may affect the structure of your rendered output. Unlike [Brisa](#brisa-experimental), where this issue is avoided, the extra `<div>` nodes can lead to unexpected layout changes or styling issues.
+
+### Kitajs/html
+
+Configuration example:
+
+```tsx
+import { createElement } from "@kitajs/html";
+import prerenderMacroPlugin, { type PrerenderConfig } from "prerender-macro";
+
+export const prerenderConfig = {
+  render: createElement,
+} satisfies PrerenderConfig;
+
+export const plugin = prerenderMacroPlugin({
+  prerenderConfigPath: import.meta.url,
+});
+```
+
+> [!NOTE]
+>
+> Kitajs/html elements can be seamlessly coerced with Bun's AST and everything can be done AOT without having to use a `postRender`.
+
+> [!NOTE]
+>
+> Kitajs/html does not add extra nodes in the HTML, so it is a prerender of the real component, without modifying its structure.
 
 ### Add your framework example
 

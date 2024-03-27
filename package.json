@@ -6,23 +6,27 @@
   "devDependencies": {
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "@types/bun": "1.0.10",
-    "@types/react": "18.2.69",
+    "@types/bun": "1.0.11",
+    "@types/react": "18.2.72",
     "@types/react-dom": "18.2.22",
-    "brisa": "0.0.37",
-    "preact": "10.20.1"
+    "brisa": "0.0.38",
+    "preact": "10.20.1",
+    "@kitajs/html": "4.0.0-next.2",
+    "@kitajs/ts-html-plugin": "4.0.0-next.2"
   },
   "dependencies": {
     "typescript": "5.4.3"
   },
   "scripts": {
-    "test": "bun run test:brisa && bun run test:react && bun run test:preact",
+    "test": "bun run test:brisa && bun run test:react && bun run test:preact && bun run test:kitajs-html",
     "test:brisa": "cd tests/brisa && bun test && cd ../..",
     "test:react": "cd tests/react && bun test && cd ../..",
     "test:preact": "cd tests/preact && bun test && cd ../..",
+    "test:kitajs-html": "cd tests/kitajs-html && bun test && cd ../..",
     "demo:react": "cd examples/react && bun start",
     "demo:brisa": "cd examples/brisa && bun start",
-    "demo:preact": "cd examples/preact && bun start"
+    "demo:preact": "cd examples/preact && bun start",
+    "demo:kitajs-html": "cd examples/kitajs-html && bun start"
   },
   "workspaces": [
     "package",
