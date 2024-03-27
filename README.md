@@ -1,7 +1,7 @@
 <p align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/aralroca/prerender-macro/assets/13313058/d51dd094-5e0a-47c8-a7e0-0599feeea09f" height="128">
-      <img src="https://github.com/aralroca/prerender-macro/assets/13313058/b73f8012-0dc2-4d96-aeda-b4a1b235cc9e" height="128">
+      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/aralroca/prerender-macro/assets/13313058/6dd31f2c-5cf4-445c-89d4-9a4e0acd4cdc" height="128">
+      <img src="https://github.com/aralroca/prerender-macro/assets/13313058/24a41ba3-081e-4e7f-b6b4-fdc4d62c29ec" height="128">
     </picture>
     <h1 align="center">Prerender Macro</h1>
 </p>
@@ -26,9 +26,9 @@
 
 <p align="center">Work in every JSX Framework.</p>
 
-- [At glance](#at-glance)
-  - [How it works?](#how-it-works)
-- [Quick start](#quick-start)
+- [At a glance](#at-a-glance)
+  - [How does it work?](#how-does-it-work)
+- [Quick Start](#quick-start)
   - [Install](#install)
   - [Use it in `Bun.build`](#use-it-in-bunbuild)
 - [Configuration](#configuration)
@@ -41,9 +41,9 @@
 - [Contributing](#contributing)
 - [License](#license)
 
-## At glance
+## At a glance
 
-`prerender-macro` plugin allows to make hybrid pages between dynamic and static components, avoiding the rendering in runtime of the static ones, this rendering is done in build-time thanks to Bun's macros.
+`prerender-macro` plugin allows [Partial Prerendering](https://aralroca.com/blog/partial-prerendering) (PPR) to make hybrid pages between dynamic and static components, avoiding the rendering in runtime of the static ones, this rendering is done in build-time thanks to Bun's macros.
 
 ```tsx
 import StaticComponent from "@/static-component" with { type: "prerender" };
@@ -67,9 +67,9 @@ In this way:
   <img src="https://github.com/aralroca/prerender-macro/assets/13313058/8ab3cf1d-c395-494e-88aa-69ca207d7bdc" alt="React example" class="center" />
 </figure>
 
-### How it works?
+### How does it work?
 
-This plugin transforms the previous code to this code:
+This plugin transforms the previous code into this code:
 
 ```tsx
 import { prerender } from "prerender-macro/prerender" with { "type": "macro" };
@@ -92,7 +92,7 @@ And pass it back through the [Bun transpiler](https://bun.sh/docs/api/transpiler
 
 > [!IMPORTANT]
 >
-> Macros can accept **component properties**, but only in limited cases. The value must be **statically known**. For more info take a look the [Bun Macros Arguments](https://bun.sh/docs/bundler/macros#arguments) documentation.
+> Macros can accept **component properties**, but only in limited cases. The value must be **statically known**. For more info take a look at the [Bun Macros Arguments](https://bun.sh/docs/bundler/macros#arguments) documentation.
 
 ## Quick start
 
@@ -131,7 +131,7 @@ The `prerender-macro` plugin needs this mandatory configuration to work:
 | --------------------- | --------------------------------------------------------------- | --------- |
 | `prerenderConfigPath` | String path of the file with the `prerenderConfig` named export | `true`    |
 
-The configuration can be in another file, but it is mandatory that it has the named export `prerenderConfig`.
+The configuration can be in another file, but it must have the named export `prerenderConfig`.
 
 It is necessary to do it this way because this configuration will be executed when doing the prerender inside a Bun macro, and at this point we cannot pass it from the plugin because it would need to be serialized, so it is better that you directly access it.
 
